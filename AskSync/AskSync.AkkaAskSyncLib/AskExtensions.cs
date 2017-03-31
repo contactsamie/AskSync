@@ -1,7 +1,7 @@
 ﻿using System;
 using Akka.Actor;
 
-namespace AskSync.Test
+namespace AskSync.AkkaAskSyncLib
 {
     public static class AskExtensions
     {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 
-namespace AskSync.Test
+namespace AskSync.AkkaAskSyncLib
 {
     /// <summary>
     /// Represents a lock that is used to manage access to a resource, allowing multiple threads for reading or exclusive access for writing.
@@ -11,11 +11,10 @@ namespace AskSync.Test
     /// <typeparam name="TVal"></typeparam>
     internal class SynchronizedCache<TKey,TVal>
     {
-        private ReaderWriterLockSlim _cacheLock = new ReaderWriterLockSlim();
-        private Dictionary<TKey, TVal> _innerCache = new Dictionary<TKey, TVal>();
+        private readonly ReaderWriterLockSlim _cacheLock = new ReaderWriterLockSlim();
+        private readonly Dictionary<TKey, TVal> _innerCache = new Dictionary<TKey, TVal>();
 
-        public int Count
-        { get { return _innerCache.Count; } }
+        public int Count => _innerCache.Count;
 
         public TVal Read(TKey key)
         {
@@ -68,7 +67,7 @@ namespace AskSync.Test
             _cacheLock.EnterUpgradeableReadLock();
             try
             {
-                TVal result = default(TVal);
+                TVal result;
                 if (_innerCache.TryGetValue(key, out result))
                 {
                     if (Equals(result, value))
@@ -131,7 +130,7 @@ namespace AskSync.Test
 
         ~SynchronizedCache()
         {
-            if (_cacheLock != null) _cacheLock.Dispose();
+            _cacheLock?.Dispose();
         }
 
         public bool Contains(TKey id)

@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using Akka.Actor;
 
-namespace AskSync.Test
+namespace AskSync.AkkaAskSyncLib
 {
     internal class AskSyncReceiveActor : ActorBase
     {

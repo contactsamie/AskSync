@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.IO;
 using Akka.Util.Internal;
+using AskSync.AkkaAskSyncLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AskSync.Test
