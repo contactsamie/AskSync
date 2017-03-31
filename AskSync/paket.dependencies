@@ -1,6 +1,18 @@
 source https://api.nuget.org/v3/index.json
-framework >= net452
 
+framework <= net452
 nuget Akka 1.1.3
 nuget Newtonsoft.Json 9.0.1
 nuget System.Collections.Immutable 1.1.36
+nuget fake
+nuget ConfigJson
+nuget xunit 2.2.0-beta3-build3402 framework: >= net452
+nuget xunit.abstractions 2.0.1 framework: >= net452
+nuget xunit.assert 2.2.0-beta3-build3402 framework: >= net452
+nuget xunit.core 2.2.0-beta3-build3402 framework: >= net452
+nuget xunit.extensibility.core 2.2.0-beta3-build3402 framework: >= net452
+nuget xunit.extensibility.execution 2.2.0-beta3-build3402 framework: >= net452
+nuget xunit.runner.console
+nuget FsCheck 2.6.2
+nuget FsCheck.Xunit
+nuget FSharp.Core 4.0.1.7-alpha framework: >= net452

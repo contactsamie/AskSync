@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata  minClientVersion="3.3.0">
+    <id>@project@</id>
+    <version>@build.number@</version>
+    <authors>@authors@</authors>
+    <owners>@authors@</owners>
+    <summary>@summary@</summary>
+    <licenseUrl>https://github.com/contactsamie/AskSync/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/contactsamie/AskSync</projectUrl>
+    <iconUrl>https://akkaasksync.github.io/akkaasksync.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>@description@</description>
+    <releaseNotes>@releaseNotes@</releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <tags>Concurrency</tags>
+    @dependencies@
+    @references@
+  </metadata>
+  <files>
+    <file src="AskSync.AkkaAskSyncLib.dll" target="lib\net45" />
+  </files>
+</package>

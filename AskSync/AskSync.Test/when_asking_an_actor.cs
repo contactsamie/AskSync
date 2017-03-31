@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -8,15 +9,23 @@ using Akka.Actor;
 using Akka.IO;
 using Akka.Util.Internal;
 using AskSync.AkkaAskSyncLib;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace AskSync.Test
 {
-    [TestClass]
+   
     public class when_asking_an_actor
     {
+       
+        private readonly ITestOutputHelper _output=null;
+
+        public when_asking_an_actor(ITestOutputHelper output)
+        {
+            this._output = output;
+        }
         public const int TotalCounter = 100;
-        [TestMethod]
+        [Fact]
         public void use_ask_sync()
         {
             var system = ActorSystem.Create("TestCAtorSystem");
@@ -31,15 +40,12 @@ namespace AskSync.Test
                 var res = testActor.AskSync<ActorIdentity>(new Identify(null),null,i.ToString());
                 result[i.ToString()] = res;
             });
-            sw.Stop();
-            Console.WriteLine(sw.Elapsed);
-            foreach (var data in list.Select(i => result[i.ToString()]))
-            {
-                Assert.IsTrue(data != null);
-            }
+            AssertMeetsExpectation(sw, list, result);
         }
 
-        [TestMethod]
+       
+
+        [Fact]
         public void use_ask_async()
         {
           
@@ -55,11 +61,15 @@ namespace AskSync.Test
                 var res = testActor.Ask<ActorIdentity>(new Identify(null)).Result;
                 result[i.ToString()] = res;
             });
+            AssertMeetsExpectation(sw, list, result);
+        }
+        private void AssertMeetsExpectation(Stopwatch sw, List<int> list, ConcurrentDictionary<string, ActorIdentity> result)
+        {
             sw.Stop();
-            Console.WriteLine(sw.Elapsed);
+            _output.WriteLine(sw.Elapsed.ToString());
             foreach (var data in list.Select(i => result[i.ToString()]))
             {
-                Assert.IsTrue(data != null);
+                Assert.True(data != null);
             }
         }
     }

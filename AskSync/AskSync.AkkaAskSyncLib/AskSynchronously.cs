@@ -18,11 +18,10 @@ namespace AskSync.AkkaAskSyncLib
                 Signal = new ManualResetEventSlim()
             };
             actor.Tell(message);
-            message.Signal.Wait();
+            message.Signal.Wait(timeout?? TimeSpan.FromSeconds(3));
             message.Signal.Dispose();
-            var read = CacheFactory.Cache.Read(id).Item2;
-            var res = (T)read;
-            return res;
+            var result = (T)CacheFactory.Cache.Read(id).Item2;
+            return result;
         }
     }
 }
