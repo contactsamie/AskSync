@@ -37,7 +37,7 @@ let product = "AkkaAskSync"
 let authors = [ "samuel" ]
 let copyright = "©2017"
 let company = ""
-let description = "Akka.NET extension allowing you to Ask Synchronously. No need to deal with asyc-await issues"
+let description = "Akka.NET extension allowing you to Ask Synchronously, when you want to avoid asyc-await  "
 let tags = []
 let projectName="AkkaAskSync"
 // Read release notes and version

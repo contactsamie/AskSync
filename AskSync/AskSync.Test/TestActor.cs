@@ -2,8 +2,7 @@
 
 namespace AskSync.Test
 {
-    public class TestActor :ReceiveActor
+    public class TestActor : ReceiveActor
     {
-
     }
 }

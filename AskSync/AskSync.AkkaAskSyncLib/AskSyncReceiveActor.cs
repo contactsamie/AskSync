@@ -6,18 +6,20 @@ namespace AskSync.AkkaAskSyncLib
 {
     internal class AskSyncReceiveActor : ActorBase
     {
-        private string _messageId = null;
+        private string _messageId;
         private ManualResetEventSlim _signal;
+
         protected override bool Receive(object m)
         {
             if (!(m is AskMessage)) return true;
             var message = (AskMessage) m;
-            CacheFactory. Cache.Add(message.MessageId, new Tuple<IActorRef, object>(message.Actor,null));
+            CacheFactory.Cache.Add(message.MessageId, new Tuple<IActorRef, object>(message.Actor, null));
             _messageId = message.MessageId;
             _signal = message.Signal;
-            message.Actor.Tell(message.Message,Self);
+            message.Actor.Tell(message.Message, Self);
             return true;
         }
+
         protected override bool AroundReceive(Receive receive, object message)
         {
             if (message is AskMessage)

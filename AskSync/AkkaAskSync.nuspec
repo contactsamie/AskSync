@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <package>
-  <metadata  minClientVersion="3.3.0">
+  <metadata minClientVersion="3.3.0">
     <id>@project@</id>
     <version>@build.number@</version>
     <authors>@authors@</authors>
@@ -13,7 +14,7 @@
     <description>@description@</description>
     <releaseNotes>@releaseNotes@</releaseNotes>
     <copyright>Copyright 2017</copyright>
-    <tags>Concurrency</tags>
+    <tags>Concurrency,akka, akka.net,actorsystem,actor</tags>
     @dependencies@
     @references@
   </metadata>

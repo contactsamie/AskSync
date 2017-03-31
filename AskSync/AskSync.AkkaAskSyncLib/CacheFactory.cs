@@ -5,6 +5,7 @@ namespace AskSync.AkkaAskSyncLib
 {
     internal class CacheFactory
     {
-        internal static SynchronizedCache<string, Tuple<IActorRef, object>> Cache = new SynchronizedCache<string, Tuple<IActorRef, object>>();
+        internal static SynchronizedCache<string, Tuple<IActorRef, object>> Cache =
+            new SynchronizedCache<string, Tuple<IActorRef, object>>();
     }
 }

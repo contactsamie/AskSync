@@ -4,13 +4,21 @@ using System.Threading;
 namespace AskSync.AkkaAskSyncLib
 {
     /// <summary>
-    /// Represents a lock that is used to manage access to a resource, allowing multiple threads for reading or exclusive access for writing.
-    /// Ensure that TVal overrides Equals which will be used in implementing AddOrUpdate
+    ///     Represents a lock that is used to manage access to a resource, allowing multiple threads for reading or exclusive
+    ///     access for writing.
+    ///     Ensure that TVal overrides Equals which will be used in implementing AddOrUpdate
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TVal"></typeparam>
-    internal class SynchronizedCache<TKey,TVal>
+    internal class SynchronizedCache<TKey, TVal>
     {
+        public enum AddOrUpdateStatus
+        {
+            Added,
+            Updated,
+            Unchanged
+        }
+
         private readonly ReaderWriterLockSlim _cacheLock = new ReaderWriterLockSlim();
         private readonly Dictionary<TKey, TVal> _innerCache = new Dictionary<TKey, TVal>();
 
@@ -56,10 +64,7 @@ namespace AskSync.AkkaAskSyncLib
                 }
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         public AddOrUpdateStatus AddOrUpdate(TKey key, TVal value)
@@ -121,13 +126,6 @@ namespace AskSync.AkkaAskSyncLib
             }
         }
 
-        public enum AddOrUpdateStatus
-        {
-            Added,
-            Updated,
-            Unchanged
-        };
-
         ~SynchronizedCache()
         {
             _cacheLock?.Dispose();
@@ -135,7 +133,7 @@ namespace AskSync.AkkaAskSyncLib
 
         public bool Contains(TKey id)
         {
-            return    _innerCache.ContainsKey(id);
+            return _innerCache.ContainsKey(id);
         }
     }
 }
