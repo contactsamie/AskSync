@@ -1,6 +1,6 @@
 @echo on
 cls
 paket.bootstrapper.exe
-paket install
+paket restore --force
 packages\FAKE\tools\Fake.exe build.fsx
 pause

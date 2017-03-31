@@ -41,12 +41,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AskExtensions.cs" />
-    <Compile Include="AskMessage.cs" />
-    <Compile Include="AskSynchronously.cs" />
-    <Compile Include="AskSyncReceiveActor.cs" />
-    <Compile Include="CacheFactory.cs" />
+    <Compile Include="Messages\AskMessage.cs" />
+    <Compile Include="Services\AskSynchronously.cs" />
+    <Compile Include="Actors\AskSyncReceiveActor.cs" />
+    <Compile Include="Services\ConcurrentDictionaryCacheService.cs" />
+    <Compile Include="Contracts\IAskSynchronously.cs" />
+    <Compile Include="Contracts\ICacheService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SynchronizedCache.cs" />
+    <Compile Include="Common\SynchronizedCache.cs" />
+    <Compile Include="Services\ConcurrentDictionaryCacheStore.cs" />
+    <Compile Include="Services\SynchronizedCacheService.cs" />
+    <Compile Include="Services\SynchronizedCacheStore.cs" />
+    <Compile Include="SynchronousAskFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />

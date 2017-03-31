@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 
-namespace AskSync.AkkaAskSyncLib
+namespace AskSync.AkkaAskSyncLib.Common
 {
     /// <summary>
     ///     Represents a lock that is used to manage access to a resource, allowing multiple threads for reading or exclusive
@@ -13,6 +13,10 @@ namespace AskSync.AkkaAskSyncLib
     /// <typeparam name="TVal"></typeparam>
     internal class SynchronizedCache<TKey, TVal>
     {
+        public SynchronizedCache()
+        {
+        }
+
         public enum AddOrUpdateStatus
         {
             Added,
