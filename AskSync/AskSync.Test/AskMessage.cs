@@ -1,11 +1,13 @@
+using System.Threading;
 using Akka.Actor;
 
 namespace AskSync.Test
 {
-    public class AskMessage
+    internal class AskMessage
     {
-        public string messageId;
-        public IActorRef Actor;
+        public string MessageId { get; set; }
+        public IActorRef Actor { get; set; }
         public object Message { get; set; }
+        public ManualResetEventSlim Signal { get; set; }
     }
 }

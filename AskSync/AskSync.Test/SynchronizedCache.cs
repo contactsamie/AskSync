@@ -9,7 +9,7 @@ namespace AskSync.Test
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TVal"></typeparam>
-    public class SynchronizedCache<TKey,TVal>
+    internal class SynchronizedCache<TKey,TVal>
     {
         private ReaderWriterLockSlim _cacheLock = new ReaderWriterLockSlim();
         private Dictionary<TKey, TVal> _innerCache = new Dictionary<TKey, TVal>();

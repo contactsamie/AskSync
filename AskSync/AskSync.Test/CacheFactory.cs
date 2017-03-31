@@ -3,9 +3,8 @@ using Akka.Actor;
 
 namespace AskSync.Test
 {
-    public class CacheFactory
+    internal class CacheFactory
     {
-        public static SynchronizedCache<string, Tuple<IActorRef, object>> Cache = new SynchronizedCache<string, Tuple<IActorRef, object>>();
-
+        internal static SynchronizedCache<string, Tuple<IActorRef, object>> Cache = new SynchronizedCache<string, Tuple<IActorRef, object>>();
     }
 }

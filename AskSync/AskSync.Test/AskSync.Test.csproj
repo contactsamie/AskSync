@@ -64,9 +64,11 @@
   <ItemGroup>
     <Compile Include="AskExtensions.cs" />
     <Compile Include="AskMessage.cs" />
+    <Compile Include="AskSynchronously.cs" />
+    <Compile Include="AskSyncReceiveActor.cs" />
     <Compile Include="CacheFactory.cs" />
     <Compile Include="SynchronizedCache.cs" />
-    <Compile Include="TestActorB.cs" />
+    <Compile Include="TestActor.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
