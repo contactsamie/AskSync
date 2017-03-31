@@ -7,6 +7,7 @@ namespace AskSync.AkkaAskSyncLib
     ///     Represents a lock that is used to manage access to a resource, allowing multiple threads for reading or exclusive
     ///     access for writing.
     ///     Ensure that TVal overrides Equals which will be used in implementing AddOrUpdate
+    ///     todo checkout this claim https://www.codeproject.com/Articles/548406/Dictionary-plus-Locking-versus-ConcurrentDictionar
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TVal"></typeparam>
