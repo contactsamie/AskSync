@@ -5,6 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{76F64C42-3AC4-48F6-A051-186EF24D5C08}"
 	ProjectSection(SolutionItems) = preProject
+		paket.bootstrapper.exe = paket.bootstrapper.exe
 		paket.dependencies = paket.dependencies
 		paket.lock = paket.lock
 	EndProjectSection

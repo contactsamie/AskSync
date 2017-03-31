@@ -37,7 +37,7 @@ let product = "AkkaAskSync"
 let authors = [ "samuel" ]
 let copyright = "©2017"
 let company = ""
-let description = "AkkaAskSync"
+let description = "Akka.NET extension allowing you to Ask Synchronously. No need to deal with asyc-await issues"
 let tags = []
 let projectName="AkkaAskSync"
 // Read release notes and version
@@ -134,7 +134,6 @@ Target "RemotePublishNuGet" (fun _ ->
 "Clean"
   ==> "Build"
   ==> "Test"
-  //==> "Deploy"
   ==> "CreateNuget"
   ==> "RemotePublishNuGet"
 

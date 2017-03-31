@@ -1,6 +1,6 @@
 @echo on
 cls
-.paket\paket.bootstrapper.exe
-.paket\paket install
+paket.bootstrapper.exe
+paket install
 packages\FAKE\tools\Fake.exe build.fsx
 pause
