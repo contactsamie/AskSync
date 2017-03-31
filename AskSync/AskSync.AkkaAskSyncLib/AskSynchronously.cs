@@ -6,18 +6,17 @@ namespace AskSync.AkkaAskSyncLib
 {
     internal class AskSynchronously
     {
-        internal T AskSyncInternal<T>(ActorSystem actorSystem, IActorRef iCantell, object whatToAsk,
-            TimeSpan? timeout = null, string id = null)
+        internal T AskSyncInternal<T>(
+           ActorSystem actorSystem
+         , IActorRef actoRef
+         , object whatToAsk
+         , TimeSpan? timeout = null
+         , string id = null
+        )
         {
             id = id ?? Guid.NewGuid().ToString();
             var actor = actorSystem.ActorOf(Props.Create(() => new AskSyncReceiveActor()));
-            var message = new AskMessage
-            {
-                MessageId = id,
-                Actor = iCantell,
-                Message = whatToAsk,
-                Signal = new ManualResetEventSlim()
-            };
+            var message = new AskMessage(id, actoRef, whatToAsk, new ManualResetEventSlim());
             actor.Tell(message);
             message.Signal.Wait(timeout ?? TimeSpan.FromSeconds(3));
             message.Signal.Dispose();
