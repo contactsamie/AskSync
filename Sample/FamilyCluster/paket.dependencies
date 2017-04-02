@@ -1,0 +1,24 @@
+source https://api.nuget.org/v3/index.json
+
+nuget Akka 
+nuget Akka.Cluster 
+nuget Akka.Logger.NLog 
+nuget Akka.Remote 
+nuget Akka.Serialization.Wire 
+nuget AkkaAskSync 1.1.3.104-pre framework: >= net452
+nuget Google.ProtocolBuffers 2.4.1.555
+nuget Helios 
+nuget Microsoft.Bcl.Immutable  framework: >= net45
+nuget Newtonsoft.Json 
+nuget NLog 
+nuget System.Collections  framework: >= net45
+nuget System.Collections.Immutable 
+nuget System.Diagnostics.Debug  framework: >= net45
+nuget System.Globalization framework: >= net45
+nuget System.Linq   framework: >= net45
+nuget System.Resources.ResourceManager  framework: >= net45
+nuget System.Runtime  framework: >= net45
+nuget System.Runtime.Extensions framework: >= net45
+nuget System.Threading  framework: >= net45
+nuget Topshelf  framework: >= net45
+nuget Topshelf.NLog  framework: >= net45
