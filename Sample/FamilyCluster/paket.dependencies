@@ -22,3 +22,4 @@ nuget System.Runtime.Extensions framework: >= net45
 nuget System.Threading  framework: >= net45
 nuget Topshelf  framework: >= net45
 nuget Topshelf.NLog  framework: >= net45
+nuget wire 0.7.1

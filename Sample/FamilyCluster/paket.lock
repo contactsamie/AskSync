@@ -603,3 +603,6 @@ NUGET
     Topshelf.NLog (4.0.3) - framework: >= net45
       NLog (>= 4.3.10)
       Topshelf (>= 4.0.3)
+    Wire (0.7.1)
+      Microsoft.CSharp (>= 4.0.1) - framework: >= netstandard16
+      NETStandard.Library (>= 1.6) - framework: >= netstandard16
