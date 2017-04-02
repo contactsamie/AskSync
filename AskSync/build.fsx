@@ -58,7 +58,7 @@ let NugetDeployPath= match nugetDeployPath with
                            | _         -> "-"+buildParam
 
 // version info
-let version = "1.1.3.103-pre" 
+let version = "1.1.3.104-pre" 
 
 // Targets
 Target "Clean" (fun _ -> 

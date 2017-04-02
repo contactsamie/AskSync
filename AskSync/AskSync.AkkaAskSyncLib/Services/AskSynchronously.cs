@@ -29,7 +29,7 @@ namespace AskSync.AkkaAskSyncLib.Services
             var result = synchronousAskFactory.GetCacheService().Read(id).Item2;
             if (result==null)
             {
-               throw  new Exception();
+               throw  new Exception($"Possibly timeout of {timeout} exceeded");
             }
             return (T)result;
         }

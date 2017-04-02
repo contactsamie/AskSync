@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Akka.Actor;
 using AskSync.AkkaAskSyncLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -9,9 +10,10 @@ namespace AskSyncSample
     {
         public TestActor()
         {
+            var time = DateTime.UtcNow;
             ReceiveAny(_ =>
             {
-                Sender.Tell(DateTime.UtcNow);
+                Sender.Tell(time);
             });
         }
     }
@@ -30,49 +32,50 @@ namespace AskSyncSample
         [TestMethod]
         public void Remoting()
         {
-            var config = @"
-                akka {{  
-                    actor {{
-                        provider = ""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
-                    }}
-                    remote {{
-                        helios.tcp {{
-                            transport-class = ""Akka.Remote.Transport.Helios.HeliosTcpTransport, Akka.Remote""
-                            applied-adapters = []
+            const string config = @"
+                akka { 
+                    actor {
+                        
+                    }
+                    remote {
+                        helios.tcp {                            
                             transport-protocol = tcp
-                            port = 0
+                            port = 10000
                             hostname = {0}
                             send-buffer-size = 512000b
                             receive-buffer-size = 512000b
                             maximum-frame-size = 1024000b
                             tcp-keepalive = on
-                        }}
+                        }
 
-                        transport-failure-detector {{
+                        transport-failure-detector {
                             heartbeat-interval = 60 s # default 4s
                             acceptable-heartbeat-pause = 20 s # default 10s
-                        }}
-                    }}
+                        }
+                    }
 
                     stdout-loglevel = DEBUG
                     loglevel = DEBUG
 
-                    debug {{  
+                    debug {  
                             receive = on 
                             autoreceive = on
                             lifecycle = on
                             event-stream = on
                             unhandled = on
-                    }}
-                }}
+                    }
+                }
                 ";
-            var systemA = ActorSystem.Create("TestActorSystem", config);
-            var testActorA = systemA.ActorOf(Props.Create<TestActor>(), nameof(TestActor));
+            var systemA = ActorSystem.Create("TestActorSystemA");
+            var systemB = ActorSystem.Create("TestActorSystemB", config);
+            systemB.ActorOf(Props.Create<TestActor>(), nameof(TestActor));
+            var remoteAddress = "akka.tcp://TestActorSystemB@localhost:10000/user/" + nameof(TestActor);
+            var resultAskSync = systemA.ActorSelection(remoteAddress).AskSync<DateTime>("", TimeSpan.FromSeconds(3));
 
-            var systemB = ActorSystem.Create("TestActorSystem", config);
-            var testActorB = systemA.ActorOf(Props.Create<TestActor>(), nameof(TestActor));
-            
-            Console.WriteLine(systemA.ActorSelection("").AskSync<DateTime>(""));
+            var resultAsk = Task.Run(()=> systemA.ActorSelection(remoteAddress).Ask<DateTime>("", TimeSpan.FromSeconds(3))).Result;
+            Console.WriteLine(resultAsk);
+            Console.WriteLine(resultAskSync);
+            Assert.AreEqual(resultAskSync,resultAsk);
         }
 
 
