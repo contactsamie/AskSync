@@ -20,41 +20,18 @@ namespace AskSync.AkkaAskSyncLib.Services
         {
             id = id ?? Guid.NewGuid().ToString();
             var signal = new ManualResetEventSlim();
-            var resultData = new ResultData();
+            //var resultData = new ResultData();
             var message = new AskMessage(id, actoRef, whatToAsk, signal);
-            var actor = actorSystem.ActorOf(Props.Create(() => new AskSyncReceiveActor(synchronousAskFactory, resultData)));
+            var actor = actorSystem.ActorOf(Props.Create(() => new AskSyncReceiveActor(synchronousAskFactory/*, resultData*/)));
             actor.Tell(message);
-            signal.Wait(timeout ?? TimeSpan.FromSeconds(3));
+            signal.Wait(timeout ?? TimeSpan.FromSeconds(10));
             signal.Dispose();
             var result = synchronousAskFactory.GetCacheService().Read(id).Item2;
+            if (result==null)
+            {
+               throw  new Exception();
+            }
             return (T)result;
         }
-    }
-    internal class NoLockingAskSynchronously : IAskSynchronously
-    {
-        public T AskSyncInternal<T>(
-           ActorSystem actorSystem
-         , IActorRef actoRef
-         , object whatToAsk
-         , TimeSpan? timeout
-         , string id
-         , SynchronousAskFactory synchronousAskFactory
-        )
-        {
-            id = id ?? Guid.NewGuid().ToString();
-            var signal = new ManualResetEventSlim();
-            var resultData = new ResultData();
-            var message = new AskMessage(id, actoRef, whatToAsk, signal);
-            var actor = actorSystem.ActorOf(Props.Create(() => new AskSyncReceiveActor(synchronousAskFactory, resultData)));
-            actor.Tell(message);
-            signal.Wait(timeout ?? TimeSpan.FromSeconds(3));
-            signal.Dispose();
-            return (T)resultData.Result;
-        }
-    }
-
-    internal class ResultData
-    {
-        public object Result { set; get; }
     }
 }

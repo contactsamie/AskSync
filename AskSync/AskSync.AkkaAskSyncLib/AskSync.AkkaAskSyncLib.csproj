@@ -50,6 +50,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\SynchronizedCache.cs" />
     <Compile Include="Services\ConcurrentDictionaryCacheStore.cs" />
+    <Compile Include="Services\NoLockingAskSynchronously.cs" />
+    <Compile Include="Services\ProducerConsumerQueue.cs" />
+    <Compile Include="Services\ResultData.cs" />
     <Compile Include="Services\SynchronizedCacheService.cs" />
     <Compile Include="Services\SynchronizedCacheStore.cs" />
     <Compile Include="SynchronousAskFactory.cs" />

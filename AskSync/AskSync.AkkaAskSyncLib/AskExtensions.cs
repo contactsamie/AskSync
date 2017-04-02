@@ -7,7 +7,7 @@ namespace AskSync.AkkaAskSyncLib
     {
         internal static ActorSystem ActorSystem { set; get; }
         internal static SynchronousAskFactory SynchronousAskFactory = new SynchronousAskFactory();
-
+        
         public static T AskSync<T>(
             this IActorRef actorRef
           , object whatToAsk

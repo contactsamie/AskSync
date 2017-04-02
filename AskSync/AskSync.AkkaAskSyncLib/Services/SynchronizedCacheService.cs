@@ -10,13 +10,13 @@ namespace AskSync.AkkaAskSyncLib.Services
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
             if (actorRef == null) throw new ArgumentNullException(nameof(actorRef));
-            _cache.AddOrUpdate(id, new Tuple<IActorRef, object>(actorRef, messageReturned));
+            Cache.AddOrUpdate(id, new Tuple<IActorRef, object>(actorRef, messageReturned));
         }
 
         public Tuple<IActorRef, object> Read(string id)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
-            var data = _cache.Read(id);
+            var data = Cache.Read(id);
 
             return data;
         }

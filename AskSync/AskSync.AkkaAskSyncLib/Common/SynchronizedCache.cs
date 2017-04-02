@@ -13,10 +13,6 @@ namespace AskSync.AkkaAskSyncLib.Common
     /// <typeparam name="TVal"></typeparam>
     internal class SynchronizedCache<TKey, TVal>
     {
-        public SynchronizedCache()
-        {
-        }
-
         public enum AddOrUpdateStatus
         {
             Added,

@@ -9,14 +9,12 @@ namespace AskSync.AkkaAskSyncLib.Actors
     {
         private SynchronousAskFactory SynchronousAskFactory { set; get; }
 
-        private ResultData ResultData { set; get; }
+       // private ResultData ResultData { set; get; }
 
-        public AskSyncReceiveActor(SynchronousAskFactory synchronousAskFactory, ResultData resultData)
+        public AskSyncReceiveActor(SynchronousAskFactory synchronousAskFactory/*, ResultData resultData*/)
         {
             SynchronousAskFactory = synchronousAskFactory;
-            ResultData = resultData;
-
-
+           // ResultData = resultData;
         }
 
         private string _messageId;
@@ -40,7 +38,7 @@ namespace AskSync.AkkaAskSyncLib.Actors
                 return base.AroundReceive(receive, message);
             }
             var cache = SynchronousAskFactory.GetCacheService().Read(_messageId);
-            ResultData.Result = message;
+            //ResultData.Result = message;
             SynchronousAskFactory.GetCacheService().AddOrUpdate(_messageId, cache.Item1, message);
             _signal.Set();
             Self.Tell(PoisonPill.Instance);
