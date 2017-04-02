@@ -9,7 +9,7 @@ namespace AskSync.AkkaAskSyncLib
         internal static SynchronousAskFactory SynchronousAskFactory = new SynchronousAskFactory();
         
         public static T AskSync<T>(
-            this IActorRef actorRef
+            this ICanTell actorRef
           , object whatToAsk
           , TimeSpan? timeout = null
           , string id = null)
