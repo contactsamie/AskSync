@@ -7,6 +7,6 @@ namespace AskSync.AkkaAskSyncLib.Services
     [Obsolete("this was way slower")]
     internal class ConcurrentDictionaryCacheStore
     {
-        protected static readonly ConcurrentDictionary<string, Tuple<IActorRef, object>> Cache = new ConcurrentDictionary<string, Tuple<IActorRef, object>>();
+        protected static readonly ConcurrentDictionary<string, Tuple<ICanTell, object>> Cache = new ConcurrentDictionary<string, Tuple<ICanTell, object>>();
     }
 }

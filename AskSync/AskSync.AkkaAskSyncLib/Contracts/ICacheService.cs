@@ -5,8 +5,8 @@ namespace AskSync.AkkaAskSyncLib.Contracts
 {
     internal interface ICacheService
     {
-        void AddOrUpdate(string id, IActorRef actorRef, object messageReturned);
+        void AddOrUpdate(string id, ICanTell actorRef, object messageReturned);
 
-        Tuple<IActorRef, object> Read(string id);
+        Tuple<ICanTell, object> Read(string id);
     }
 }

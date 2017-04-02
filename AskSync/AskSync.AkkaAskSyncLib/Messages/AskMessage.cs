@@ -8,7 +8,7 @@ namespace AskSync.AkkaAskSyncLib.Messages
     {
         public AskMessage(
             string messageId
-          , IActorRef actor
+          , ICanTell actor
           , object message
           , ManualResetEventSlim signal
          )
@@ -21,7 +21,7 @@ namespace AskSync.AkkaAskSyncLib.Messages
         }
 
         public string MessageId { get; private set; }
-        public IActorRef Actor { get; private set; }
+        public ICanTell Actor { get; private set; }
         public object Message { get; private set; }
         public ManualResetEventSlim Signal { get; private set; }
         

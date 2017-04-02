@@ -12,7 +12,7 @@ namespace AskSync.AkkaAskSyncLib.Services
     {
         public T AskSyncInternal<T>(
             ActorSystem actorSystem
-            , IActorRef actoRef
+            , ICanTell actoRef
             , object whatToAsk
             , TimeSpan? timeout
             , string id
