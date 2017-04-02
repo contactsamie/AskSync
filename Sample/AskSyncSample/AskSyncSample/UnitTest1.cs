@@ -16,6 +16,11 @@ namespace AskSyncSample
                 Sender.Tell(time);
             });
         }
+
+        protected override void PreRestart(Exception reason, object message)
+        {
+            base.PreRestart(reason, message);
+        }
     }
     [TestClass]
     public class UnitTest1
@@ -32,47 +37,51 @@ namespace AskSyncSample
         [TestMethod]
         public void Remoting()
         {
-            const string config = @"
-                akka { 
-                    actor {
+             Func<int,string> config =(p)=>
+                 $@"
+                akka {{ 
+                    actor {{
                         
-                    }
-                    remote {
-                        helios.tcp {                            
+                    }}
+                    remote {{
+                        helios.tcp {{                            
                             transport-protocol = tcp
-                            port = 10000
-                            hostname = {0}
-                            send-buffer-size = 512000b
-                            receive-buffer-size = 512000b
-                            maximum-frame-size = 1024000b
-                            tcp-keepalive = on
-                        }
+                            port = {p}
+                            hostname = 0.0.0.0
+                            public-hostname = localhost
+                            #send-buffer-size = 512000b
+                            #receive-buffer-size = 512000b
+                            #maximum-frame-size = 1024000b
+                            #tcp-keepalive = on
+                        }}
+                        transport-failure-detector {{
+                            #heartbeat-interval = 60 s # default 4s
+                            #acceptable-heartbeat-pause = 20 s # default 10s
+                        }}
+                    }}
 
-                        transport-failure-detector {
-                            heartbeat-interval = 60 s # default 4s
-                            acceptable-heartbeat-pause = 20 s # default 10s
-                        }
-                    }
+                    #stdout-loglevel = DEBUG
+                    #loglevel = DEBUG
 
-                    stdout-loglevel = DEBUG
-                    loglevel = DEBUG
-
-                    debug {  
+                    debug {{  
                             receive = on 
                             autoreceive = on
                             lifecycle = on
                             event-stream = on
                             unhandled = on
-                    }
-                }
-                ";
-            var systemA = ActorSystem.Create("TestActorSystemA");
-            var systemB = ActorSystem.Create("TestActorSystemB", config);
-            systemB.ActorOf(Props.Create<TestActor>(), nameof(TestActor));
-            var remoteAddress = "akka.tcp://TestActorSystemB@localhost:10000/user/" + nameof(TestActor);
-            var resultAskSync = systemA.ActorSelection(remoteAddress).AskSync<DateTime>("", TimeSpan.FromSeconds(3));
+                    }}
+                }}";
 
-            var resultAsk = Task.Run(()=> systemA.ActorSelection(remoteAddress).Ask<DateTime>("", TimeSpan.FromSeconds(3))).Result;
+            var remotePort = 1000;
+            var remoteACtorSystem = "TestActorSystemB";
+            var systemB = ActorSystem.Create(remoteACtorSystem, config(remotePort));
+            var actorB=  systemB.ActorOf(Props.Create<TestActor>(), nameof(TestActor));
+          
+            var systemA = ActorSystem.Create("TestActorSystemA", config(0));
+            var remoteAddress = "akka.tcp://"+ remoteACtorSystem + "@localhost:"+ remotePort + "/user/*/" + nameof(TestActor);
+            Task.Delay(TimeSpan.FromSeconds(2)).Wait();
+            var resultAsk = Task.Run(() => systemA.ActorSelection(remoteAddress).Ask<DateTime>("123", TimeSpan.FromSeconds(3))).Result;
+            var resultAskSync = systemA.ActorSelection(remoteAddress).AskSync<DateTime>("123", TimeSpan.FromSeconds(3));
             Console.WriteLine(resultAsk);
             Console.WriteLine(resultAskSync);
             Assert.AreEqual(resultAskSync,resultAsk);
