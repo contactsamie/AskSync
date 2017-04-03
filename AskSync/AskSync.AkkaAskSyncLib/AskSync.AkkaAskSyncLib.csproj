@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AskExtensions.cs" />
+    <Compile Include="AskSyncOptions.cs" />
     <Compile Include="Messages\AskMessage.cs" />
     <Compile Include="Services\AskSynchronously.cs" />
     <Compile Include="Actors\AskSyncReceiveActor.cs" />

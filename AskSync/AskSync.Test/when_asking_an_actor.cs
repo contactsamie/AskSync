@@ -48,7 +48,20 @@ namespace AskSync.Test
             sw.Start();
             Parallel.ForEach(_list, i =>
             {
-                var res = _testActorRef.AskSync<ActorIdentity>(new Identify(null), null, i.ToString());
+                var res = _testActorRef.AskSync<ActorIdentity>(new Identify(null), null, new AskSyncOptions() {ExecutionId = i.ToString() });
+                _result[i.ToString()] = res;
+            });
+            var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(50));
+
+        }
+        [Fact]
+        public void use_ask_sync_parallel_remoting()
+        {
+            var sw = new Stopwatch();
+            sw.Start();
+            Parallel.ForEach(_list, i =>
+            {
+                var res = _testActorRef.AskSync<ActorIdentity>(new Identify(null), null, new AskSyncOptions() { ExecutionId = i.ToString(), UseDefaultRemotingActorSystemConfig = true});
                 _result[i.ToString()] = res;
             });
             var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(50));
@@ -71,9 +84,23 @@ namespace AskSync.Test
             sw.Start();
             _list.ForEach(i =>
            {
-               var res = _testActorRef.AskSync<ActorIdentity>(new Identify(null), null, i.ToString());
+               var res = _testActorRef.AskSync<ActorIdentity>(new Identify(null), null, new AskSyncOptions() { ExecutionId = i.ToString() });
                _result[i.ToString()] = res;
            });
+            var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(300));
+
+        }
+
+        [Fact]
+        public void use_ask_sync_serial_remoting()
+        {
+            var sw = new Stopwatch();
+            sw.Start();
+            _list.ForEach(i =>
+            {
+                var res = _testActorRef.AskSync<ActorIdentity>(new Identify(null), null, new AskSyncOptions() { ExecutionId = i.ToString(),UseDefaultRemotingActorSystemConfig = true});
+                _result[i.ToString()] = res;
+            });
             var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(300));
 
         }

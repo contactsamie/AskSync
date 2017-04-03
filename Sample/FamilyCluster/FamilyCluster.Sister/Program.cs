@@ -18,8 +18,6 @@ namespace FamilyCluster.Sister
                 while (true)
                 {
                     var message = Console.ReadLine();
-                    sisterEchoActor.Tell(new Hello("From SisterSystem to sisterEchoActor" + message), ActorRefs.NoSender);
-
                     system.ActorSelection(client).Tell(new Hello("From SisterSystem to client at " + client + message));
                 }
             }

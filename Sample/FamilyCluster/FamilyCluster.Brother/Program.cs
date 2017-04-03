@@ -18,9 +18,6 @@ namespace FamilyCluster.Brother
                 while (true)
                 {
                     var message = Console.ReadLine();
-                    brotherEchoActor.Tell(new Hello("From BrotherSystem to BrotherEchoActor" + message),
-                        ActorRefs.NoSender);
-
                     system.ActorSelection(client).Tell(new Hello("From BrotherSystem to client at " + client + message));
                 }
             }
