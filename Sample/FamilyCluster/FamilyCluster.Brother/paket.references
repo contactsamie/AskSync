@@ -10,3 +10,4 @@ Newtonsoft.Json
 NLog
 System.Collections.Immutable
 Wire
+AkkaAskSync
