@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using Akka.Actor;
+using AskSync.AkkaAskSyncLib;
 using FamilyCluster.Common;
 
 namespace FamilyCluster.Sister
@@ -18,7 +19,8 @@ namespace FamilyCluster.Sister
                 while (true)
                 {
                     var message = Console.ReadLine();
-                    system.ActorSelection(client).Tell(new Hello("From SisterSystem to client at " + client + message));
+                 var result=   system.ActorSelection(client).AskSync(new Hello("From SisterSystem to client at " + client + message),null, new AskSyncOptions() {UseDefaultRemotingActorSystemConfig = true});
+                    Console.WriteLine(result);
                 }
             }
         }
