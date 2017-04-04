@@ -5,6 +5,11 @@
 
 This is a very simple Akka.NET extension that enables you to do an Ask without async await, you avoid all async/await and more issues with both local and remoting scenarios
 
+
+To install AkkaAskSync, run the following command in the Package Manager Console
+
+    Install-Package AkkaAskSync
+
 Intead of
 
     var result = await MyActor.Ask<ActorIdentity>(new Identify(null));
