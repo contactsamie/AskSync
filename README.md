@@ -22,6 +22,4 @@ For remoting, provide you existing actor system , do
 
     var result = MyActor.AskSync<ActorIdentity>(new Identify(null),MyActorSystem);
 
-NOTE : An AskSync to a remote actor may not work unless you provide your existing actorsystem with remothing enabled. For more info in configuing/enabling remoting see  http://getakka.net/docs/Remoting#using-remoting
-
-For more information about the traditional Ask see http://getakka.net/docs/Working%20with%20actors#ask-send-and-receive-future
+NOTE : An AskSync to a remote actor may not work unless you provide your existing actorsystem with remothing enabled. For more info in configuing/enabling remoting see  http://getakka.net/docs/Remoting#using-remoting  For more information about the traditional Ask see http://getakka.net/docs/Working%20with%20actors#ask-send-and-receive-future
