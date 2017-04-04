@@ -45,6 +45,50 @@ namespace AskSync.AkkaAskSyncLib
         internal static ActorSystem ActorSystem { set; get; }
 
         public static object AskSync(
+          this ICanTell actorRef
+          , object whatToAsk
+          , ActorSystem actorSystem)
+        {
+            if (actorSystem == null) throw new ArgumentNullException(nameof(actorSystem));
+            return actorRef.AskSync<object>(whatToAsk, null, new AskSyncOptions()
+            {
+                ExistingActorSystem = actorSystem
+            });
+        }
+
+        public static object AskSync(
+            this ICanTell actorRef
+            , object whatToAsk
+            , TimeSpan? timeout
+            , ActorSystem actorSystem)
+        {
+            return actorRef.AskSync<object>(whatToAsk, timeout, new AskSyncOptions()
+            {
+                ExistingActorSystem = actorSystem
+            });
+        }
+        public static T AskSync<T>(
+           this ICanTell actorRef
+           , object whatToAsk
+           , ActorSystem actorSystem)
+        {
+            return actorRef.AskSync<T>(whatToAsk, null, new AskSyncOptions()
+            {
+                ExistingActorSystem = actorSystem
+            });
+        }
+        public static T AskSync<T>(
+           this ICanTell actorRef
+           , object whatToAsk
+           , TimeSpan? timeout
+           , ActorSystem actorSystem )
+        {
+            return actorRef.AskSync<T>(whatToAsk, timeout, new AskSyncOptions()
+            {
+                ExistingActorSystem = actorSystem
+            });
+        }
+        public static object AskSync(
            this ICanTell actorRef
            , object whatToAsk
            , AskSyncOptions options = null)

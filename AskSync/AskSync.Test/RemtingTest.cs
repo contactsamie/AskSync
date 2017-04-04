@@ -135,7 +135,49 @@ namespace AskSync.Test
             }
         }
 
+        [Fact]
+        public void for_askSync_with_remote_actor_obetained_from_actor_selection3()
+        {
+            var brotherActorRef = _brotherSystem.ActorOf(Props.Create(() => new EchoActor()), BrotherActorName);
+            var brotherActorSelection = _sisterSystem.ActorSelection(BrotherAddress);
+            var brotherActorRefResolvedFromSisterActorSystem =brotherActorSelection.ResolveOne(TimeSpan.FromSeconds(5)).Result;
 
+            foreach (var i in Enumerable.Range(0, NumberOfMessages))
+            {
+                var message = new Hello($"From SisterSystem to client at {brotherActorRef.Path.Address}  {i}");
+                var result = brotherActorRefResolvedFromSisterActorSystem.AskSync<Hello>(message, _timeOut, _sisterSystem);
+                Assert.Equal(message.Message, result.Message);
+            }
+        }
+
+        [Fact]
+        public void for_askSync_with_remote_actor_obetained_from_actor_selection4()
+        {
+            var brotherActorRef = _brotherSystem.ActorOf(Props.Create(() => new EchoActor()), BrotherActorName);
+            var brotherActorSelection = _sisterSystem.ActorSelection(BrotherAddress);
+            var brotherActorRefResolvedFromSisterActorSystem = brotherActorSelection.ResolveOne(TimeSpan.FromSeconds(5)).Result;
+
+            foreach (var i in Enumerable.Range(0, NumberOfMessages))
+            {
+                var message = new Hello($"From SisterSystem to client at {brotherActorRef.Path.Address}  {i}");
+                var result =(Hello) brotherActorRefResolvedFromSisterActorSystem.AskSync(message, _timeOut, _sisterSystem);
+                Assert.Equal(message.Message, result.Message);
+            }
+        }
+        [Fact]
+        public void for_askSync_get_actor_identity()
+        {
+            var brotherActorRef = _brotherSystem.ActorOf(Props.Create(() => new EchoActor()), BrotherActorName);
+            var brotherActorSelection = _sisterSystem.ActorSelection(BrotherAddress);
+            var brotherActorRefResolvedFromSisterActorSystem = brotherActorSelection.ResolveOne(TimeSpan.FromSeconds(5)).Result;
+
+            foreach (var i in Enumerable.Range(0, NumberOfMessages))
+            {
+                var message = new Hello($"From SisterSystem to client at {brotherActorRef.Path.Address}  {i}");
+                var result = brotherActorRefResolvedFromSisterActorSystem.AskSync<ActorIdentity>(new Identify(null), _sisterSystem);
+                Assert.True(result.Subject != null);
+            }
+        }
         [Fact]
         public void for_regular_ask_with_remote_actor_obetained_from_actor_selection()
         {
