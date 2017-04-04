@@ -1,11 +1,11 @@
 ﻿using System;
-using Akka.Actor;
-using AskSync.AkkaAskSyncLib;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Akka.Actor;
+using AskSync.AkkaAskSyncLib;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -14,13 +14,15 @@ namespace AskSync.Test
     public class when_asking_an_actor
     {
         public const int TotalCounter = 1000;
-        private readonly List<int> _list;
         private const int GeneralExpectedNumberOfExecutionPerSeconds = 70;
-        private readonly Func<int, TimeSpan?> _getMaxExpectedDuration = (expectedNumberOfExecutionPerSeconds) =>
+
+        private readonly Func<int, TimeSpan?> _getMaxExpectedDuration = expectedNumberOfExecutionPerSeconds =>
         {
-            var result = TimeSpan.FromMilliseconds((int) (TotalCounter*1000/expectedNumberOfExecutionPerSeconds) );
+            var result = TimeSpan.FromMilliseconds(TotalCounter*1000/expectedNumberOfExecutionPerSeconds);
             return result;
         };
+
+        private readonly List<int> _list;
         private readonly ITestOutputHelper _output;
         private readonly ConcurrentDictionary<string, ActorIdentity> _result;
         private readonly IActorRef _testActorRef;
@@ -41,6 +43,7 @@ namespace AskSync.Test
          It took 7882.5096ms 
          instead of 20000ms for 1000 calls.
          */
+
         [Fact]
         public void use_ask_sync_parallel()
         {
@@ -48,12 +51,13 @@ namespace AskSync.Test
             sw.Start();
             Parallel.ForEach(_list, i =>
             {
-                var res = _testActorRef.AskSync<ActorIdentity>(new Identify(null), null, new AskSyncOptions() {ExecutionId = i.ToString() });
+                var res = _testActorRef.AskSync<ActorIdentity>(new Identify(null), null,
+                    new AskSyncOptions {ExecutionId = i.ToString()});
                 _result[i.ToString()] = res;
             });
             var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(50));
-
         }
+
         [Fact]
         public void use_ask_sync_parallel_remoting()
         {
@@ -61,11 +65,11 @@ namespace AskSync.Test
             sw.Start();
             Parallel.ForEach(_list, i =>
             {
-                var res = _testActorRef.AskSync<ActorIdentity>(new Identify(null), null, new AskSyncOptions() { ExecutionId = i.ToString(), UseDefaultRemotingActorSystemConfig = true});
+                var res = _testActorRef.AskSync<ActorIdentity>(new Identify(null), null,
+                    new AskSyncOptions {ExecutionId = i.ToString(), UseDefaultRemotingActorSystemConfig = true});
                 _result[i.ToString()] = res;
             });
             var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(50));
-
         }
 
         /*
@@ -77,18 +81,19 @@ namespace AskSync.Test
             It took 1162.8254ms 
             instead of 3333ms for 1000 calls.
              */
+
         [Fact]
         public void use_ask_sync_serial()
         {
             var sw = new Stopwatch();
             sw.Start();
             _list.ForEach(i =>
-           {
-               var res = _testActorRef.AskSync<ActorIdentity>(new Identify(null), null, new AskSyncOptions() { ExecutionId = i.ToString() });
-               _result[i.ToString()] = res;
-           });
+            {
+                var res = _testActorRef.AskSync<ActorIdentity>(new Identify(null), null,
+                    new AskSyncOptions {ExecutionId = i.ToString()});
+                _result[i.ToString()] = res;
+            });
             var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(300));
-
         }
 
         [Fact]
@@ -98,11 +103,11 @@ namespace AskSync.Test
             sw.Start();
             _list.ForEach(i =>
             {
-                var res = _testActorRef.AskSync<ActorIdentity>(new Identify(null), null, new AskSyncOptions() { ExecutionId = i.ToString(),UseDefaultRemotingActorSystemConfig = true});
+                var res = _testActorRef.AskSync<ActorIdentity>(new Identify(null), null,
+                    new AskSyncOptions {ExecutionId = i.ToString(), UseDefaultRemotingActorSystemConfig = true});
                 _result[i.ToString()] = res;
             });
             var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(300));
-
         }
 
         [Fact]
@@ -115,7 +120,7 @@ namespace AskSync.Test
                 var res = _testActorRef.Ask<ActorIdentity>(new Identify(null)).Result;
                 _result[i.ToString()] = res;
             });
-            var duration = AssertMeetsExpectation(sw, _list, _result,_getMaxExpectedDuration(50));
+            var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(50));
         }
 
         [Fact]
@@ -124,22 +129,24 @@ namespace AskSync.Test
             var sw = new Stopwatch();
             sw.Start();
             _list.ForEach(i =>
-           {
-               var res = _testActorRef.Ask<ActorIdentity>(new Identify(null)).Result;
-               _result[i.ToString()] = res;
-           });
+            {
+                var res = _testActorRef.Ask<ActorIdentity>(new Identify(null)).Result;
+                _result[i.ToString()] = res;
+            });
             var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(1000));
         }
 
         private TimeSpan AssertMeetsExpectation(
             Stopwatch sw
-          , IEnumerable<int> list
-          , IDictionary<string, ActorIdentity> result
-          , TimeSpan? maxExpectedDuration = null)
+            , IEnumerable<int> list
+            , IDictionary<string, ActorIdentity> result
+            , TimeSpan? maxExpectedDuration = null)
         {
             sw.Stop();
-            var expected = (maxExpectedDuration ?? _getMaxExpectedDuration(GeneralExpectedNumberOfExecutionPerSeconds)) ?? TimeSpan.MaxValue;
-             string report = $"Expected {TotalCounter/ expected.TotalSeconds} ex/s but actual rate is {TotalCounter/ sw.Elapsed.TotalSeconds} ex/s : . It took {sw.Elapsed.TotalMilliseconds}ms instead of {expected.TotalMilliseconds}ms for {TotalCounter} calls.";
+            var expected = (maxExpectedDuration ?? _getMaxExpectedDuration(GeneralExpectedNumberOfExecutionPerSeconds)) ??
+                           TimeSpan.MaxValue;
+            string report =
+                $"Expected {TotalCounter/expected.TotalSeconds} ex/s but actual rate is {TotalCounter/sw.Elapsed.TotalSeconds} ex/s : . It took {sw.Elapsed.TotalMilliseconds}ms instead of {expected.TotalMilliseconds}ms for {TotalCounter} calls.";
             _output.WriteLine($"took {sw.Elapsed} : {report}");
             foreach (var data in list.Select(i => result[i.ToString()]))
             {

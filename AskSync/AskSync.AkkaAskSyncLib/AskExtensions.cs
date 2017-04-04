@@ -1,24 +1,24 @@
-﻿using Akka.Actor;
-using System;
+﻿using System;
+using Akka.Actor;
 
 namespace AskSync.AkkaAskSyncLib
 {
     public static class AskExtensions
     {
-        internal static ActorSystem ActorSystem { set; get; }
         internal static SynchronousAskFactory SynchronousAskFactory = new SynchronousAskFactory();
         internal static string SystemName = "AskSyncActorSystem-" + Guid.NewGuid();
-        internal static Func<int, string> DefaultRemotingActorSystemConfig = (p) =>
-               $@"
+
+        internal static Func<int, string> DefaultRemotingActorSystemConfig = p =>
+            $@"
                 akka {{ 
                     actor {{
-                        
+                        provider =""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
                     }}
                     remote {{
                         helios.tcp {{                            
                             transport-protocol = tcp
                             port = {p}
-                            hostname = 0.0.0.0
+                            hostname = localhost
                             #public-hostname = localhost
                             #send-buffer-size = 512000b
                             #receive-buffer-size = 512000b
@@ -41,6 +41,9 @@ namespace AskSync.AkkaAskSyncLib
                             #unhandled = on
                     }}
                 }}";
+
+        internal static ActorSystem ActorSystem { set; get; }
+
         public static object AskSync(
             this ICanTell actorRef
             , object whatToAsk
@@ -52,25 +55,40 @@ namespace AskSync.AkkaAskSyncLib
 
         public static T AskSync<T>(
             this ICanTell actorRef
-          , object whatToAsk
-          , TimeSpan? timeout = null
-          , AskSyncOptions options = null)
+            , object whatToAsk
+            , TimeSpan? timeout = null
+            , AskSyncOptions options = null)
         {
             options = options ?? new AskSyncOptions();
-            ActorSystem= ActorSystem?? GetOrCreatedActorSystem(options);
-            var cacheService = SynchronousAskFactory.GetCacheService();
+            ActorSystem = GetOrCreatedActorSystem(ActorSystem, options);
             var synchronousAsk = SynchronousAskFactory.GetSynchronousAsk();
-            return synchronousAsk.AskSyncInternal<T>(ActorSystem, actorRef, whatToAsk, timeout, options.ExecutionId, SynchronousAskFactory);
+            return synchronousAsk.AskSyncInternal<T>(
+                ActorSystem, actorRef, whatToAsk, timeout, options.ExecutionId, SynchronousAskFactory);
         }
 
-        private static ActorSystem GetOrCreatedActorSystem(AskSyncOptions options)
+
+        private static ActorSystem GetOrCreatedActorSystem(ActorSystem savedSystem, AskSyncOptions options)
         {
-            return  (options.UseDefaultRemotingActorSystemConfig
-                ? (Akka.Actor.ActorSystem.Create(SystemName
-                    , DefaultRemotingActorSystemConfig(options.DefaultRemotingPort)))
-                : (string.IsNullOrEmpty(options.ActorSystemConfig)
-                    ? Akka.Actor.ActorSystem.Create(SystemName)
-                    : Akka.Actor.ActorSystem.Create(SystemName, options.ActorSystemConfig)));
+            //todo clear confusion regarding these parameters
+            ActorSystem result;
+            if (options.ExistingActorSystem != null)
+            {
+                result = options.ExistingActorSystem;
+            }
+            else if (options.UseDefaultRemotingActorSystemConfig)
+            {
+                result = savedSystem ??
+                         ActorSystem.Create(SystemName, DefaultRemotingActorSystemConfig(options.DefaultRemotingPort));
+            }
+            else if (!string.IsNullOrEmpty(options.ActorSystemConfig))
+            {
+                result = savedSystem ?? ActorSystem.Create(SystemName, options.ActorSystemConfig);
+            }
+            else
+            {
+                result = savedSystem ?? ActorSystem.Create(SystemName);
+            }
+            return result;
         }
     }
 }

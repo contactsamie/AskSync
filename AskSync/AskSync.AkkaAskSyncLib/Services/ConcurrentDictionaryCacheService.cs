@@ -1,6 +1,6 @@
+using System;
 using Akka.Actor;
 using AskSync.AkkaAskSyncLib.Contracts;
-using System;
 
 namespace AskSync.AkkaAskSyncLib.Services
 {
@@ -22,6 +22,4 @@ namespace AskSync.AkkaAskSyncLib.Services
             return data;
         }
     }
-
-
 }

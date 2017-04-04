@@ -1,4 +1,6 @@
 Akka
+Akka.Serialization.Hyperion
+Akka.Remote
 Newtonsoft.Json
 System.Collections.Immutable
 FsCheck.Xunit

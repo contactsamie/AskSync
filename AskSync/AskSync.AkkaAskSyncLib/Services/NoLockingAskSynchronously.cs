@@ -21,13 +21,14 @@ namespace AskSync.AkkaAskSyncLib.Services
         {
             id = id ?? Guid.NewGuid().ToString();
             var signal = new ManualResetEventSlim();
-           // var resultData = new ResultData();
+            // var resultData = new ResultData();
+            var actor =
+                actorSystem.ActorOf(Props.Create(() => new AskSyncReceiveActor(synchronousAskFactory /*,resultData*/)));
             var message = new AskMessage(id, actoRef, whatToAsk, signal);
-            var actor = actorSystem.ActorOf(Props.Create(() => new AskSyncReceiveActor(synchronousAskFactory/*,resultData*/)));
             actor.Tell(message);
             signal.Wait(timeout ?? TimeSpan.FromSeconds(3));
             signal.Dispose();
-           // return (T)resultData.Result;
+            // return (T)resultData.Result;
             return default(T);
         }
     }

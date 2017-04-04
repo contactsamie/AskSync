@@ -1,5 +1,5 @@
-using Akka.Actor;
 using System;
+using Akka.Actor;
 
 namespace AskSync.AkkaAskSyncLib.Contracts
 {
@@ -12,6 +12,6 @@ namespace AskSync.AkkaAskSyncLib.Contracts
             , TimeSpan? timeout
             , string id
             , SynchronousAskFactory SynchronousAskFactory
-        );
+            );
     }
 }

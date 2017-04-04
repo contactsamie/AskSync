@@ -1,5 +1,4 @@
-﻿using System;
-using Akka.Actor;
+﻿using Akka.Actor;
 
 namespace AskSync.AkkaAskSyncLib
 {
@@ -9,9 +8,11 @@ namespace AskSync.AkkaAskSyncLib
         {
             DefaultRemotingPort = 0;
         }
-        public string ExecutionId {  set; get; }
+
+        public string ExecutionId { set; get; }
         public string ActorSystemConfig { set; get; }
         public bool UseDefaultRemotingActorSystemConfig { set; get; }
         public int DefaultRemotingPort { set; get; }
+        public ActorSystem ExistingActorSystem { get; set; }
     }
 }
