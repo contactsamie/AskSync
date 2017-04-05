@@ -35,7 +35,29 @@ namespace AskSync.Test
             _list = Enumerable.Range(1, TotalCounter).ToList();
             _result = new ConcurrentDictionary<string, ActorIdentity>();
         }
+        /*
+      for SynchronizedCacheService
 
+         took 00:00:01.1628254 : 
+         Expected 300.0300030003 ex/s but 
+         actual rate is 859.974334925948 ex/s : . 
+         It took 1162.8254ms 
+         instead of 3333ms for 1000 calls.
+          */
+
+        [Fact]
+        public void use_ask_sync_serial()
+        {
+            var sw = new Stopwatch();
+            sw.Start();
+            _list.ForEach(i =>
+            {
+                var res = _testActorRef.AskSync<ActorIdentity>(new Identify(null), null,
+                    new AskSyncOptions { ExecutionId = i.ToString() });
+                _result[i.ToString()] = res;
+            });
+            var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(300));
+        }
         /*
          * for SynchronizedCacheService
          took 00:00:07.8825096 : Expected 50 ex/s but 
@@ -72,29 +94,7 @@ namespace AskSync.Test
             var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(50));
         }
 
-        /*
-         for SynchronizedCacheService
-            
-            took 00:00:01.1628254 : 
-            Expected 300.0300030003 ex/s but 
-            actual rate is 859.974334925948 ex/s : . 
-            It took 1162.8254ms 
-            instead of 3333ms for 1000 calls.
-             */
-
-        [Fact]
-        public void use_ask_sync_serial()
-        {
-            var sw = new Stopwatch();
-            sw.Start();
-            _list.ForEach(i =>
-            {
-                var res = _testActorRef.AskSync<ActorIdentity>(new Identify(null), null,
-                    new AskSyncOptions {ExecutionId = i.ToString()});
-                _result[i.ToString()] = res;
-            });
-            var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(300));
-        }
+     
 
         [Fact]
         public void use_ask_sync_serial_remoting()

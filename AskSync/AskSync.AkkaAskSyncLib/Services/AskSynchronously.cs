@@ -10,7 +10,7 @@ namespace AskSync.AkkaAskSyncLib.Services
     internal class DefaultAskSynchronously : IAskSynchronously
     {
         public T AskSyncInternal<T>(
-            ActorSystem actorSystem
+            IActorRef workerActor
             , ICanTell actoRef
             , object whatToAsk
             , TimeSpan? timeout
@@ -20,11 +20,8 @@ namespace AskSync.AkkaAskSyncLib.Services
         {
             id = id ?? Guid.NewGuid().ToString();
             var signal = new ManualResetEventSlim();
-            //var resultData = new ResultData();
-            var actor = actorSystem.ActorOf(Props.Create(() => new AskSyncReceiveActor(synchronousAskFactory)));
-
             var message = new AskMessage(id, actoRef, whatToAsk, signal);
-            actor.Tell(message);
+            workerActor.Tell(message);
             signal.Wait(timeout ?? TimeSpan.FromSeconds(10));
             signal.Dispose();
             var result = synchronousAskFactory.GetCacheService().Read(id).Item2;
