@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actors\AskSyncReceiveActorWorker.cs" />
     <Compile Include="AskExtensions.cs" />
     <Compile Include="AskSyncOptions.cs" />
     <Compile Include="Messages\AskMessage.cs" />
