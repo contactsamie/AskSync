@@ -45,7 +45,7 @@
     </When>
   </Choose>
   <ItemGroup>
-    <Compile Include="RemtingTest.cs" />
+    <Compile Include="RemotingTest.cs" />
     <Compile Include="TestActor.cs" />
     <Compile Include="when_asking_an_actor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

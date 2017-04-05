@@ -6,7 +6,7 @@ using Xunit;
 
 namespace AskSync.Test
 {
-    public class RemtingTest
+    public class RemotingTest
     {
         private const int NumberOfMessages = 10;
         private const bool UseRemoting = true;
@@ -14,7 +14,7 @@ namespace AskSync.Test
         private readonly ActorSystem _sisterSystem;
         private readonly TimeSpan? _timeOut = TimeSpan.FromSeconds(10);
 
-        public RemtingTest()
+        public RemotingTest()
         {
             _brotherSystem = UseRemoting
                 ? ActorSystem.Create(BrotherActorSystemName, GetHoconSettingForRemoting(BrotherPortAddress))
