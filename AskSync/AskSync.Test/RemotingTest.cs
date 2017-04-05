@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Akka.Actor;
+using Akka.Configuration;
 using AskSync.AkkaAskSyncLib;
 using Xunit;
 
@@ -17,11 +18,11 @@ namespace AskSync.Test
         public RemotingTest()
         {
             _brotherSystem = UseRemoting
-                ? ActorSystem.Create(BrotherActorSystemName, GetHoconSettingForRemoting(BrotherPortAddress))
+                ? ActorSystem.Create(BrotherActorSystemName,ConfigurationFactory.ParseString(GetHoconSettingForRemoting(BrotherPortAddress)))
                 : ActorSystem.Create(BrotherActorSystemName);
 
             _sisterSystem = UseRemoting
-                ? ActorSystem.Create(SisterActorSystemName, GetHoconSettingForRemoting(SisterPortAddress))
+                ? ActorSystem.Create(SisterActorSystemName, ConfigurationFactory.ParseString(GetHoconSettingForRemoting(SisterPortAddress)))
                 : ActorSystem.Create(SisterActorSystemName);
         }
 
@@ -215,13 +216,13 @@ namespace AskSync.Test
                 $@"
                 akka {{ 
                      actor{{ 
-                        serializers{{ 
-                                     hyperion = ""Akka.Serialization.HyperionSerializer, Akka.Serialization.Hyperion""
-                                }} 
+                        #serializers{{ 
+                                     #hyperion = ""Akka.Serialization.HyperionSerializer, Akka.Serialization.Hyperion""
+                                #}} 
                   
-                        serialization-bindings  {{ 
-                                    ""System.Object"" = hyperion
-                                }}
+                        #serialization-bindings  {{ 
+                                    #""System.Object"" = hyperion
+                                #}}
                         provider =""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
 				    }}
                     remote {{
@@ -232,15 +233,15 @@ namespace AskSync.Test
                     }}
                 }}";
 
-        public class EchoActor : ReceiveActor
+        public class EchoActor : ActorBase
         {
-            public EchoActor()
+          
+
+            protected override bool Receive(object hello)
             {
-                Receive<Hello>(hello =>
-                {
-                    Console.WriteLine("[{0}]: {1}", Sender, hello.Message);
-                    Sender.Tell(hello);
-                });
+                Console.WriteLine("[{0}]: {1}", Sender, ((Hello)hello).Message);
+                Sender.Tell(hello);
+                return true;
             }
         }
 
