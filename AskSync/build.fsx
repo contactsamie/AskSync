@@ -58,7 +58,6 @@ let NugetDeployPath= match nugetDeployPath with
                            | _         -> "-"+buildParam
 
 // version info
-let version = "1.1.3.108" 
 
 // Targets
 Target "Clean" (fun _ -> 
@@ -110,7 +109,7 @@ Target "CreateNuget" (fun _ ->
             WorkingDir = nugetWorkingDir
             Version = version 
             Dependencies = [
-                             "Akka", "1.1.3"
+                             "Akka.Remote", "1.1.3"
                            ]
          })             
             "AkkaAskSync.nuspec"

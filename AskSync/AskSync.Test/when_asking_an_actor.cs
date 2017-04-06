@@ -56,7 +56,7 @@ namespace AskSync.Test
                     new AskSyncOptions { ExecutionId = i.ToString() });
                 _result[i.ToString()] = res;
             });
-            var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(300));
+            var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(3500));
         }
         /*
          * for SynchronizedCacheService
@@ -77,7 +77,7 @@ namespace AskSync.Test
                     new AskSyncOptions {ExecutionId = i.ToString()});
                 _result[i.ToString()] = res;
             });
-            var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(50));
+            var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(200));
         }
 
         [Fact]
@@ -91,7 +91,7 @@ namespace AskSync.Test
                     new AskSyncOptions {ExecutionId = i.ToString(), UseDefaultRemotingActorSystemConfig = true});
                 _result[i.ToString()] = res;
             });
-            var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(50));
+            var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(300));
         }
 
      
@@ -107,7 +107,7 @@ namespace AskSync.Test
                     new AskSyncOptions {ExecutionId = i.ToString(), UseDefaultRemotingActorSystemConfig = true});
                 _result[i.ToString()] = res;
             });
-            var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(300));
+            var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(1000));
         }
 
         [Fact]

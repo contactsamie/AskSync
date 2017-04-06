@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Actors\AskSyncReceiveActorWorker.cs" />
     <Compile Include="AskExtensions.cs" />
+    <Compile Include="Services\AskSyncImplementation.cs" />
     <Compile Include="AskSyncOptions.cs" />
     <Compile Include="Messages\AskMessage.cs" />
     <Compile Include="Services\AskSynchronously.cs" />
@@ -53,9 +54,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\SynchronizedCache.cs" />
     <Compile Include="Services\ConcurrentDictionaryCacheStore.cs" />
-    <Compile Include="Services\NoLockingAskSynchronously.cs" />
     <Compile Include="Services\ProducerConsumerQueue.cs" />
-    <Compile Include="Services\ResultData.cs" />
     <Compile Include="Services\SynchronizedCacheService.cs" />
     <Compile Include="Services\SynchronizedCacheStore.cs" />
     <Compile Include="SynchronousAskFactory.cs" />
@@ -77,6 +76,44 @@
       <ItemGroup>
         <Reference Include="Akka">
           <HintPath>..\packages\Akka\lib\net45\Akka.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5.2'">
+      <ItemGroup>
+        <Reference Include="Akka.Remote">
+          <HintPath>..\packages\Akka.Remote\lib\net45\Akka.Remote.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5.2'">
+      <ItemGroup>
+        <Reference Include="Google.ProtocolBuffers">
+          <HintPath>..\packages\Google.ProtocolBuffers\lib\net40\Google.ProtocolBuffers.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+        <Reference Include="Google.ProtocolBuffers.Serialization">
+          <HintPath>..\packages\Google.ProtocolBuffers\lib\net40\Google.ProtocolBuffers.Serialization.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5.2'">
+      <ItemGroup>
+        <Reference Include="Helios">
+          <HintPath>..\packages\Helios\lib\net45\Helios.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
