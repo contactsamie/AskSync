@@ -87,22 +87,22 @@ namespace AskSync.AkkaAskSyncLib.Services
             if (options.ExistingActorSystem != null)
             {
                 result = options.ExistingActorSystem;
-                actorRef = result.ActorOf(Props.Create(() => new AskSyncReceiveActor(SynchronousAskFactory/*, options.ActorBufferSize*/)));
+                actorRef = result.ActorOf(Props.Create(() => new AskSyncReceiveActor(SynchronousAskFactory,options.WorkerActorPoolSize)));
             }
             else if (options.UseDefaultRemotingActorSystemConfig)
             {
                 result = savedSystem ?? ActorSystem.Create(SystemName + Guid.NewGuid(), DefaultRemotingActorSystemConfig(options.DefaultRemotingPort));
-                actorRef = savedWorkeActorRef ?? result.ActorOf(Props.Create(() => new AskSyncReceiveActor(SynchronousAskFactory/*, options.ActorBufferSize*/)));
+                actorRef = savedWorkeActorRef ?? result.ActorOf(Props.Create(() => new AskSyncReceiveActor(SynchronousAskFactory,options.WorkerActorPoolSize)));
             }
             else if (!string.IsNullOrEmpty(options.ActorSystemConfig))
             {
                 result = savedSystem ?? ActorSystem.Create(SystemName + Guid.NewGuid(), options.ActorSystemConfig);
-                actorRef = savedWorkeActorRef ?? result.ActorOf(Props.Create(() => new AskSyncReceiveActor(SynchronousAskFactory/*, options.ActorBufferSize*/)));
+                actorRef = savedWorkeActorRef ?? result.ActorOf(Props.Create(() => new AskSyncReceiveActor(SynchronousAskFactory,options.WorkerActorPoolSize)));
             }
             else
             {
                 result = savedSystem ?? ActorSystem.Create(SystemName + Guid.NewGuid());
-                actorRef = savedWorkeActorRef ?? result.ActorOf(Props.Create(() => new AskSyncReceiveActor(SynchronousAskFactory/*, options.ActorBufferSize*/)));
+                actorRef = savedWorkeActorRef ?? result.ActorOf(Props.Create(() => new AskSyncReceiveActor(SynchronousAskFactory,options.WorkerActorPoolSize)));
             }
             return new Tuple<ActorSystem, IActorRef>(result, actorRef);
         }
