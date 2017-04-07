@@ -5,13 +5,13 @@ using AskSync.AkkaAskSyncLib.Messages;
 
 namespace AskSync.AkkaAskSyncLib.Actors
 {
-    internal class AskSyncReceiveActor : ReceiveActor
+    internal class AskSyncCoOrdinatorActor : ReceiveActor
     {
         private readonly Stack<IActorRef> _oneOffWorkerActors = new Stack<IActorRef>();
-        public AskSyncReceiveActor(SynchronousAskFactory synchronousAskFactory)
+        public AskSyncCoOrdinatorActor(SynchronousAskFactory synchronousAskFactory)
         {
             WorkerActorPoolSize = 10;
-            var props = Props.Create(() => new AskSyncReceiveActorWorker(synchronousAskFactory));
+            var props = Props.Create(() => new AskSyncReceiveActorWorker(synchronousAskFactory)).WithSupervisorStrategy( Akka.Actor.SupervisorStrategy.StoppingStrategy);
             RebuildOneOffActorStack(WorkerActorPoolSize, props);
             Receive<AskMessage>(message =>
             {

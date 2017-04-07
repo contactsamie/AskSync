@@ -22,7 +22,7 @@ namespace AskSync.AkkaAskSyncLib.Services
 
           WorkerActor = options.ExistingActorSystem != null || WorkerActor == null
               ? ActorSystem
-              .ActorOf(Props.Create(() => new AskSyncReceiveActor(SynchronousAskFactory))
+              .ActorOf(Props.Create(() => new AskSyncCoOrdinatorActor(SynchronousAskFactory))
               /*.WithRouter(new RoundRobinPool(100))*/
               )
               : WorkerActor;

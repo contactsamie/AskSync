@@ -47,7 +47,7 @@
     <Compile Include="AskSyncOptions.cs" />
     <Compile Include="Messages\AskMessage.cs" />
     <Compile Include="Services\AskSynchronously.cs" />
-    <Compile Include="Actors\AskSyncReceiveActor.cs" />
+    <Compile Include="Actors\AskSyncCoOrdinatorActor.cs" />
     <Compile Include="Services\ConcurrentDictionaryCacheService.cs" />
     <Compile Include="Contracts\IAskSynchronously.cs" />
     <Compile Include="Contracts\ICacheService.cs" />
