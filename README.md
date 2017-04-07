@@ -31,7 +31,7 @@ For remoting, provide your existing actor system , do
 
 NOTES 1: I agree with @HCanber on https://github.com/akkadotnet/akka.net/issues/516#issuecomment-64754125 . @Aaronontheweb has a different take though on the issue as he states here https://github.com/akkadotnet/akka.net/issues/516#issuecomment-65143282 
 
-NOTE 2: An AskSync to a remote actor may not work unless you provide your existing actorsystem with remoting enabled. For more info in configuing/enabling remoting see  http://getakka.net/docs/Remoting#using-remoting  For more information about the traditional Ask see http://getakka.net/docs/Working%20with%20actors#ask-send-and-receive-future
+NOTE 2: An AskSync to a remote actor may not work unless you provide your existing actorsystem with remoting enabled. For more info in configuring/enabling remoting see  http://getakka.net/docs/Remoting#using-remoting  For more information about the traditional Ask see http://getakka.net/docs/Working%20with%20actors#ask-send-and-receive-future
 
 
 For issues , https://github.com/contactsamie/AskSync/issues
