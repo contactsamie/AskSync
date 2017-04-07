@@ -9,18 +9,11 @@ namespace AskSync.AkkaAskSyncLib.Services
 {
     internal class DefaultAskSynchronously : IAskSynchronously
     {
-        public T AskSyncInternal<T>(
-            IActorRef workerActor
-            , ICanTell actoRef
-            , object whatToAsk
-            , TimeSpan? timeout
-            , string id
-            , SynchronousAskFactory synchronousAskFactory
-            )
+        public T AskSyncInternal<T>(IActorRef workerActor, ICanTell actoRef, object whatToAsk, TimeSpan? timeout, string id, int workerActorPoolSize, SynchronousAskFactory synchronousAskFactory)
         {
             id = id ?? Guid.NewGuid().ToString();
             var signal = new ManualResetEventSlim();
-            var message = new AskMessage(id, actoRef, whatToAsk, signal);
+            var message = new AskMessage(id, actoRef, whatToAsk, signal,workerActorPoolSize);
             workerActor.Tell(message);
             signal.Wait(timeout ?? TimeSpan.FromSeconds(10));
             signal.Dispose();

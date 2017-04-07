@@ -35,19 +35,31 @@ namespace AskSync.Test
             _list = Enumerable.Range(1, TotalCounter).ToList();
             _result = new ConcurrentDictionary<string, ActorIdentity>();
         }
-        /*
-      for SynchronizedCacheService
+        [Fact]
+        public void use_ask_sync_serial_with_warming()
+        {
+            var warmup = _testActorRef.AskSync(new Identify(null), new AskSyncOptions() { WorkerActorPoolSize = 1000 });
 
-         took 00:00:01.1628254 : 
-         Expected 300.0300030003 ex/s but 
-         actual rate is 859.974334925948 ex/s : . 
-         It took 1162.8254ms 
-         instead of 3333ms for 1000 calls.
-          */
-
+            var sw = new Stopwatch();
+            sw.Start();
+            _list.ForEach(i =>
+            {
+                var res = _testActorRef.AskSync<ActorIdentity>(new Identify(null), null,
+                    new AskSyncOptions { ExecutionId = i.ToString() });
+                _result[i.ToString()] = res;
+            });
+            var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(15000));
+        }
+        /*     
+        took 00:00:00.0588610 : 
+        Expected 3508.77192982456 ex/s but actual 
+        rate is 16989.1778936817 ex/s : . 
+        It took 58.861ms instead of 285ms for 1000 calls.
+        */
         [Fact]
         public void use_ask_sync_serial()
         {
+         
             var sw = new Stopwatch();
             sw.Start();
             _list.ForEach(i =>
@@ -57,6 +69,51 @@ namespace AskSync.Test
                 _result[i.ToString()] = res;
             });
             var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(3500));
+        }
+        [Fact]
+        public void use_ask_sync_serial_in_comparison_tofaster_option()
+        {
+            var warmup = _testActorRef.AskSync(new Identify(null));
+
+            var noOfWorkers = 100;
+
+            var sw = new Stopwatch();
+            sw.Start();
+            _list.ForEach(i =>
+            {
+                var res = _testActorRef.AskSync<ActorIdentity>(new Identify(null), null,
+                    new AskSyncOptions { ExecutionId = i.ToString() });
+                _result[i.ToString()] = res;
+            });
+            var durationSlow = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(1800));
+
+
+
+            var sw1 = new Stopwatch();
+            sw1.Start();
+            _list.ForEach(i =>
+            {
+                var res = _testActorRef.AskSync<ActorIdentity>(new Identify(null), null,
+                    new AskSyncOptions { ExecutionId = i.ToString(), WorkerActorPoolSize = noOfWorkers });
+                _result[i.ToString()] = res;
+            });
+            var durationFast = AssertMeetsExpectation(sw1, _list, _result, _getMaxExpectedDuration(3500));
+
+          
+            /*
+             REPORT-------------------
+             noOfWorkers : 1000
+             252 ms SLOW
+             47 ms FAST
+             Margin : 204 ms             
+             */
+            _output.WriteLine("REPORT-------------------"); 
+            _output.WriteLine("noOfWorkers : " + noOfWorkers);
+            _output.WriteLine(durationSlow.Milliseconds + " ms SLOW");
+            _output.WriteLine(durationFast.Milliseconds + " ms FAST");
+            _output.WriteLine("Margin : "+(durationSlow - durationFast).Milliseconds+" ms");
+
+            Assert.True(durationSlow.TotalMilliseconds- durationFast.TotalMilliseconds>0);
         }
         /*
          * for SynchronizedCacheService
@@ -107,34 +164,10 @@ namespace AskSync.Test
                     new AskSyncOptions {ExecutionId = i.ToString(), UseDefaultRemotingActorSystemConfig = true});
                 _result[i.ToString()] = res;
             });
-            var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(1000));
+            var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(700));
         }
 
-        [Fact]
-        public void use_ask_async_serial()
-        {
-            var sw = new Stopwatch();
-            sw.Start();
-            Parallel.ForEach(_list, i =>
-            {
-                var res = _testActorRef.Ask<ActorIdentity>(new Identify(null)).Result;
-                _result[i.ToString()] = res;
-            });
-            var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(50));
-        }
-
-        [Fact]
-        public void use_ask_async_parallel()
-        {
-            var sw = new Stopwatch();
-            sw.Start();
-            _list.ForEach(i =>
-            {
-                var res = _testActorRef.Ask<ActorIdentity>(new Identify(null)).Result;
-                _result[i.ToString()] = res;
-            });
-            var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(1000));
-        }
+      
 
         private TimeSpan AssertMeetsExpectation(
             Stopwatch sw
@@ -155,6 +188,35 @@ namespace AskSync.Test
             Assert.True(sw.Elapsed < expected, $"Execution succeeded but took longer - {report} ");
 
             return sw.Elapsed;
+        }
+
+
+
+
+        [Fact]
+        public void use_ask_async_parallel()
+        {
+            var sw = new Stopwatch();
+            sw.Start();
+            Parallel.ForEach(_list, i =>
+            {
+                var res = _testActorRef.Ask<ActorIdentity>(new Identify(null)).Result;
+                _result[i.ToString()] = res;
+            });
+            var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(50));
+        }
+
+        [Fact]
+        public void use_ask_async_serial()
+        {
+            var sw = new Stopwatch();
+            sw.Start();
+            _list.ForEach(i =>
+            {
+                var res = _testActorRef.Ask<ActorIdentity>(new Identify(null)).Result;
+                _result[i.ToString()] = res;
+            });
+            var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(1000));
         }
     }
 }

@@ -29,6 +29,7 @@ namespace AskSync.AkkaAskSyncLib.Services
                 , whatToAsk
                 , timeout
                 , options.ExecutionId
+                , options.WorkerActorPoolSize
                 , SynchronousAskFactory
                 );
 
@@ -71,7 +72,6 @@ namespace AskSync.AkkaAskSyncLib.Services
                 }}";
 
         internal static IActorRef WorkerActor { get; set; }
-
         internal static ActorSystem ActorSystem { set; get; }
 
         internal static Tuple<ActorSystem, IActorRef> GetOrCreatedActorSystem(
@@ -83,26 +83,26 @@ namespace AskSync.AkkaAskSyncLib.Services
             //todo clear confusion regarding these parameters
             ActorSystem result;
             IActorRef actorRef;
-            options = options ?? new AskSyncOptions();
+            
             if (options.ExistingActorSystem != null)
             {
                 result = options.ExistingActorSystem;
-                actorRef = result.ActorOf(Props.Create(() => new AskSyncReceiveActor(SynchronousAskFactory,options.WorkerActorPoolSize)));
+                actorRef = result.ActorOf(Props.Create(() => new AskSyncReceiveActor(SynchronousAskFactory)));
             }
             else if (options.UseDefaultRemotingActorSystemConfig)
             {
                 result = savedSystem ?? ActorSystem.Create(SystemName + Guid.NewGuid(), DefaultRemotingActorSystemConfig(options.DefaultRemotingPort));
-                actorRef = savedWorkeActorRef ?? result.ActorOf(Props.Create(() => new AskSyncReceiveActor(SynchronousAskFactory,options.WorkerActorPoolSize)));
+                actorRef = savedWorkeActorRef ?? result.ActorOf(Props.Create(() => new AskSyncReceiveActor(SynchronousAskFactory)));
             }
             else if (!string.IsNullOrEmpty(options.ActorSystemConfig))
             {
                 result = savedSystem ?? ActorSystem.Create(SystemName + Guid.NewGuid(), options.ActorSystemConfig);
-                actorRef = savedWorkeActorRef ?? result.ActorOf(Props.Create(() => new AskSyncReceiveActor(SynchronousAskFactory,options.WorkerActorPoolSize)));
+                actorRef = savedWorkeActorRef ?? result.ActorOf(Props.Create(() => new AskSyncReceiveActor(SynchronousAskFactory)));
             }
             else
             {
                 result = savedSystem ?? ActorSystem.Create(SystemName + Guid.NewGuid());
-                actorRef = savedWorkeActorRef ?? result.ActorOf(Props.Create(() => new AskSyncReceiveActor(SynchronousAskFactory,options.WorkerActorPoolSize)));
+                actorRef = savedWorkeActorRef ?? result.ActorOf(Props.Create(() => new AskSyncReceiveActor(SynchronousAskFactory)));
             }
             return new Tuple<ActorSystem, IActorRef>(result, actorRef);
         }

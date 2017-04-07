@@ -8,20 +8,31 @@ namespace AskSync.AkkaAskSyncLib.Actors
     internal class AskSyncReceiveActor : ReceiveActor
     {
         private readonly Stack<IActorRef> _oneOffWorkerActors = new Stack<IActorRef>();
-        public AskSyncReceiveActor(SynchronousAskFactory synchronousAskFactory,int workerActorPoolSize = 10)
+        public AskSyncReceiveActor(SynchronousAskFactory synchronousAskFactory)
         {
-            WorkerActorPoolSize = workerActorPoolSize;
+            WorkerActorPoolSize = 10;
             var props = Props.Create(() => new AskSyncReceiveActorWorker(synchronousAskFactory));
             RebuildOneOffActorStack(WorkerActorPoolSize, props);
             Receive<AskMessage>(message =>
             {
                 var workerActor = _oneOffWorkerActors.Pop();
                 workerActor.Forward(message);
-                if (_oneOffWorkerActors.Count == 0)
-                {
-                    RebuildOneOffActorStack(WorkerActorPoolSize, props);
-                }
+                PostMessageHandler(message, props);
             });
+        }
+
+        private void PostMessageHandler(AskMessage message, Props props)
+        {
+            var increaseInPoolSize = message.WorkerActorPoolSize - WorkerActorPoolSize;
+            if (increaseInPoolSize > 0)
+            {
+                WorkerActorPoolSize = message.WorkerActorPoolSize;
+                RebuildOneOffActorStack(increaseInPoolSize, props);
+            }
+            if (_oneOffWorkerActors.Count == 0)
+            {
+                RebuildOneOffActorStack(WorkerActorPoolSize, props);
+            }
         }
 
         public int WorkerActorPoolSize { get; set; }
