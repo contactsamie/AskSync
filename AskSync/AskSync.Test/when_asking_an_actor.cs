@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Akka.Actor;
+using Akka.Actor.Internal;
 using AskSync.AkkaAskSyncLib;
 using Xunit;
 using Xunit.Abstractions;
@@ -217,6 +218,39 @@ namespace AskSync.Test
                 _result[i.ToString()] = res;
             });
             var duration = AssertMeetsExpectation(sw, _list, _result, _getMaxExpectedDuration(1000));
+        }
+
+        [Fact]
+        public void load_test_sortof()
+        {
+            const int size = 100000;
+            var results = new ConcurrentDictionary<string, ActorIdentity>();
+            var swWarm = new Stopwatch();
+            swWarm.Start();
+            _testActorRef.AskSync(new Identify(null), new AskSyncOptions() {WorkerActorPoolSize = size });
+            swWarm.Stop();
+            _output.WriteLine($"took {swWarm.Elapsed.TotalMilliseconds} ms : to prepare {size} actors");
+            var range = Enumerable.Range(1, size).ToList();
+            var sw = new Stopwatch();
+            sw.Start();
+            range.ForEach(i =>
+            {
+                var res = _testActorRef.AskSync<ActorIdentity>(
+                    new Identify(null)
+                    , TimeSpan.FromMinutes(1)
+                    , new AskSyncOptions()
+                    {
+                        ExecutionId = i.ToString()
+                    });
+                results[i.ToString()] = res;
+            });
+            _output.WriteLine($"took {sw.Elapsed.TotalMilliseconds} ms : to send {size} messages");
+            foreach (var data in range.Select(i => results[i.ToString()]))
+            {
+                Assert.True(data != null);
+            }
+            Assert.Equal(size, results.Count);
+            _output.WriteLine("Verified!");
         }
     }
 }

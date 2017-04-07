@@ -67,6 +67,19 @@ namespace AskSync.AkkaAskSyncLib
         }
 
         public static T AskSync<T>(
+          this ICanTell actorRef
+          , object whatToAsk
+          , AskSyncOptions options)
+        {
+            return actorRef.AskSync<T>(
+                whatToAsk
+                , null
+                , options
+                );
+        }
+
+
+        public static T AskSync<T>(
            this ICanTell actorRef
            , object whatToAsk
            , TimeSpan? timeout
