@@ -36,7 +36,6 @@ namespace AskSync.AkkaAskSyncLib.Services
         }
         internal static SynchronousAskFactory SynchronousAskFactory = new SynchronousAskFactory();
         internal static string SystemName = "AskSyncActorSystem-" ;
-
         internal static Func<int, string> DefaultRemotingActorSystemConfig = p =>
             $@"
                 akka {{ 
@@ -48,32 +47,12 @@ namespace AskSync.AkkaAskSyncLib.Services
                             transport-protocol = tcp
                             port = {p}
                             hostname = localhost
-                            #public-hostname = localhost
-                            #send-buffer-size = 512000b
-                            #receive-buffer-size = 512000b
-                            #maximum-frame-size = 1024000b
-                            #tcp-keepalive = on
                         }}
-                        transport-failure-detector {{
-                            #heartbeat-interval = 60 s # default 4s
-                            #acceptable-heartbeat-pause = 20 s # default 10s
-                        }}
-                    }}
-
-                    #stdout-loglevel = DEBUG
-                    #loglevel = DEBUG
-                    debug {{  
-                            #receive = on 
-                            #autoreceive = on
-                            #lifecycle = on
-                            #event-stream = on
-                            #unhandled = on
                     }}
                 }}";
 
         internal static IActorRef WorkerActor { get; set; }
         internal static ActorSystem ActorSystem { set; get; }
-
         internal static Tuple<ActorSystem, IActorRef> GetOrCreatedActorSystem(
             ActorSystem savedSystem
             , AskSyncOptions options
@@ -108,3 +87,39 @@ namespace AskSync.AkkaAskSyncLib.Services
         }
     }
 }
+/*
+ internal static Func<int, string> DefaultRemotingActorSystemConfig = p =>
+            $@"
+                akka {{ 
+                    actor {{
+                        provider =""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
+                    }}
+                    remote {{
+                        helios.tcp {{                            
+                            transport-protocol = tcp
+                            port = {p}
+                            hostname = localhost
+                            #public-hostname = localhost
+                            #send-buffer-size = 512000b
+                            #receive-buffer-size = 512000b
+                            #maximum-frame-size = 1024000b
+                            #tcp-keepalive = on
+                        }}
+                        transport-failure-detector {{
+                            #heartbeat-interval = 60 s # default 4s
+                            #acceptable-heartbeat-pause = 20 s # default 10s
+                        }}
+                    }}
+
+                    #stdout-loglevel = DEBUG
+                    #loglevel = DEBUG
+                    debug {{  
+                            #receive = on 
+                            #autoreceive = on
+                            #lifecycle = on
+                            #event-stream = on
+                            #unhandled = on
+                    }}
+                }}"; 
+     
+*/
