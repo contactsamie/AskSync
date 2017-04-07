@@ -1,5 +1,6 @@
 using System;
 using Akka.Actor;
+using Akka.Routing;
 using AskSync.AkkaAskSyncLib.Actors;
 
 namespace AskSync.AkkaAskSyncLib.Services
@@ -13,14 +14,19 @@ namespace AskSync.AkkaAskSyncLib.Services
             , AskSyncOptions options = null)
         {
             options = options ?? new AskSyncOptions();
-            var result = GetOrCreatedActorSystem(
+            ActorSystem = GetOrCreatedActorSystem(
                 ActorSystem
                 , options
                 , WorkerActor
                 );
 
-            ActorSystem = result.Item1;
-            WorkerActor = result.Item2;
+          WorkerActor = options.ExistingActorSystem != null || WorkerActor == null
+              ? ActorSystem
+              .ActorOf(Props.Create(() => new AskSyncReceiveActor(SynchronousAskFactory))
+              /*.WithRouter(new RoundRobinPool(100))*/
+              )
+              : WorkerActor;
+
             var synchronousAsk = SynchronousAskFactory.GetSynchronousAsk();
 
             return synchronousAsk.AskSyncInternal<T>(
@@ -53,7 +59,7 @@ namespace AskSync.AkkaAskSyncLib.Services
 
         internal static IActorRef WorkerActor { get; set; }
         internal static ActorSystem ActorSystem { set; get; }
-        internal static Tuple<ActorSystem, IActorRef> GetOrCreatedActorSystem(
+        internal static ActorSystem GetOrCreatedActorSystem(
             ActorSystem savedSystem
             , AskSyncOptions options
             , IActorRef savedWorkeActorRef
@@ -61,29 +67,24 @@ namespace AskSync.AkkaAskSyncLib.Services
         {
             //todo clear confusion regarding these parameters
             ActorSystem result;
-            IActorRef actorRef;
-            
+
             if (options.ExistingActorSystem != null)
             {
                 result = options.ExistingActorSystem;
-                actorRef = result.ActorOf(Props.Create(() => new AskSyncReceiveActor(SynchronousAskFactory)));
             }
             else if (options.UseDefaultRemotingActorSystemConfig)
             {
                 result = savedSystem ?? ActorSystem.Create(SystemName + Guid.NewGuid(), DefaultRemotingActorSystemConfig(options.DefaultRemotingPort));
-                actorRef = savedWorkeActorRef ?? result.ActorOf(Props.Create(() => new AskSyncReceiveActor(SynchronousAskFactory)));
             }
             else if (!string.IsNullOrEmpty(options.ActorSystemConfig))
             {
                 result = savedSystem ?? ActorSystem.Create(SystemName + Guid.NewGuid(), options.ActorSystemConfig);
-                actorRef = savedWorkeActorRef ?? result.ActorOf(Props.Create(() => new AskSyncReceiveActor(SynchronousAskFactory)));
             }
             else
             {
                 result = savedSystem ?? ActorSystem.Create(SystemName + Guid.NewGuid());
-                actorRef = savedWorkeActorRef ?? result.ActorOf(Props.Create(() => new AskSyncReceiveActor(SynchronousAskFactory)));
             }
-            return new Tuple<ActorSystem, IActorRef>(result, actorRef);
+            return result;
         }
     }
 }

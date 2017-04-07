@@ -225,11 +225,12 @@ namespace AskSync.Test
         {
             const int size = 100000;
             var results = new ConcurrentDictionary<string, ActorIdentity>();
-            var swWarm = new Stopwatch();
-            swWarm.Start();
-            _testActorRef.AskSync(new Identify(null), new AskSyncOptions() {WorkerActorPoolSize = size });
-            swWarm.Stop();
-            _output.WriteLine($"took {swWarm.Elapsed.TotalMilliseconds} ms : to prepare {size} actors");
+            //var swWarm = new Stopwatch();
+            //swWarm.Start();
+            //_testActorRef.AskSync(new Identify(null), new AskSyncOptions() {WorkerActorPoolSize = size });
+            //swWarm.Stop();
+            //_output.WriteLine($"took {swWarm.Elapsed.TotalMilliseconds} ms : to prepare {size} actors");
+
             var range = Enumerable.Range(1, size).ToList();
             var sw = new Stopwatch();
             sw.Start();

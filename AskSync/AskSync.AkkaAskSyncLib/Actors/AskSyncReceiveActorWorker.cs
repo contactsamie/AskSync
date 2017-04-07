@@ -8,7 +8,6 @@ namespace AskSync.AkkaAskSyncLib.Actors
     {
         private string _messageId;
         private ManualResetEventSlim _signal;
-
         public AskSyncReceiveActorWorker(SynchronousAskFactory synchronousAskFactory)
         {
             SynchronousAskFactory = synchronousAskFactory;
