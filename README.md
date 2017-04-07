@@ -5,7 +5,7 @@
 This is a very simple Akka.NET extension that enables you to do an Ask without async await, you avoid all async/await and more issues with both local and remoting scenarios
 
 
-CAUTION :  Using this results in a slightly slower actor Ask, as its just a wrapper arround actor communication, hoever it works all the time! It's recomended to use Tell rather than Ask (To understand, why Ask is usually a bad pattern for inter-actors communication see http://bartoszsypytkowski.com/dont-ask-tell-2/). Some times though, you want to communicate with actors from 'outside'.
+CAUTION :  Using this results in a slightly slower actor Ask, as its just a wrapper arround actor communication, hoever it works all the time! It's recomended to use Tell rather than Ask (To understand, why Ask is usually a bad pattern for inter-actors communication see http://bartoszsypytkowski.com/dont-ask-tell-2/). Some times though, you want to communicate with actors from 'outside'. And some times you want to do so without 'awaiting' on it or deling with contexts
 
 
 [![NuGet version](https://img.shields.io/nuget/v/AkkaAskSync.svg?style=flat-square)](https://www.nuget.org/packages/AkkaAskSync)
