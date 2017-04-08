@@ -21,7 +21,6 @@ namespace FamilyCluster.Sister
                     var message = Console.ReadLine();
                  var result=   system.ActorSelection(client)
                         .AskSync(new Hello("From SisterSystem to client at " + client + message)
-                        ,null
                         , new AskSyncOptions()
                         {
                             ExistingActorSystem= system
