@@ -1,9 +1,13 @@
-﻿using Akka.Actor;
+﻿using System;
+using Akka.Actor;
 
 namespace AskSync.AkkaAskSyncLib
 {
     public class AskSyncOptions
     {
+        public int? RetryIdentificationCount;
+        public bool IdentifyBeforeSending;
+
         public AskSyncOptions()
         {
             DefaultRemotingPort = 0;
@@ -18,5 +22,6 @@ namespace AskSync.AkkaAskSyncLib
         /// Under high workload, feel free to increase the WorkerActorPoolSize for massive improvement in throuput!
         /// </summary>
         public int WorkerActorPoolSize { get; set; }
+        public Func<int, TimeSpan> CalculateTimeBeforeRetry { set; get; }
     }
 }

@@ -37,6 +37,9 @@ namespace AskSync.AkkaAskSyncLib.Services
                 , options.ExecutionId
                 , options.WorkerActorPoolSize
                 , SynchronousAskFactory
+                , options.RetryIdentificationCount
+                , options.IdentifyBeforeSending
+                , options.CalculateTimeBeforeRetry
                 );
 
         }

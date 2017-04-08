@@ -11,7 +11,8 @@ namespace AskSync.AkkaAskSyncLib.Actors
         public AskSyncCoOrdinatorActor(SynchronousAskFactory synchronousAskFactory)
         {
             WorkerActorPoolSize = 10;
-            var props = Props.Create(() => new AskSyncReceiveActorWorker(synchronousAskFactory)).WithSupervisorStrategy( Akka.Actor.SupervisorStrategy.StoppingStrategy);
+            var props = Props.Create(() => new AskSyncReceiveActorWorker(synchronousAskFactory))
+                .WithSupervisorStrategy( Akka.Actor.SupervisorStrategy.StoppingStrategy);
             RebuildOneOffActorStack(WorkerActorPoolSize, props);
             Receive<AskMessage>(message =>
             {

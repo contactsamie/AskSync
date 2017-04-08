@@ -1,12 +1,13 @@
 using System;
 using Akka.Actor;
+using AskSync.AkkaAskSyncLib.Messages;
 
 namespace AskSync.AkkaAskSyncLib.Contracts
 {
     internal interface ICacheService
     {
-        void AddOrUpdate(string id, ICanTell actorRef, object messageReturned);
+        void AddOrUpdate(string id, AskMessage actorRef, object messageReturned);
 
-        Tuple<ICanTell, object> Read(string id);
+        Tuple<AskMessage, object> Read(string id);
     }
 }

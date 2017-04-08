@@ -4,5 +4,7 @@ namespace AskSync.Test
 {
     public class TestActor : ReceiveActor
     {
+       
     }
+
 }
