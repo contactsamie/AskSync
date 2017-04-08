@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Configuration;
 using AskSync.AkkaAskSyncLib;
@@ -73,6 +74,31 @@ namespace AskSync.Test
             }
         }
 
+        //this takes too long
+        /*
+           [Fact]
+          public void for_askSync_with_remote_actor_obetained_from_actor_selection_for_many()
+          {
+              var brotherActorRef = _brotherSystem.ActorOf(Props.Create(() => new EchoActor()), BrotherActorName);
+              var brotherActorSelection = _sisterSystem.ActorSelection(BrotherAddress);
+
+              foreach (var i in Enumerable.Range(0, NumberOfMessages))
+              {
+                  var message = new Hello($"From SisterSystem to client at {brotherActorRef.Path.Address}  {i}");
+                  var resultTasks = Enumerable.Range(0,100).Select(x=>Task.Run(()=> brotherActorSelection.AskSync<Hello>(message, TimeSpan.FromSeconds(10),
+                      new AskSyncOptions
+                      {
+                          ExistingActorSystem = _sisterSystem
+                      })));
+                  Task.WaitAll(resultTasks.ToArray());
+                  var results = resultTasks.Select(x => x.Result);
+                  foreach (var result in results)
+                  {
+                      Assert.Equal(message.Message, result.Message);
+                  }
+              }
+          }
+               */
 
         [Fact]
         public void for_askSync_with_remote_actor_obetained_from_actor_selection2()

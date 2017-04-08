@@ -7,7 +7,7 @@ namespace AskSync.AkkaAskSyncLib.Services
 {
     internal class SynchronizedCacheStore
     {
-        protected static readonly SynchronizedCache<string, Tuple<AskMessage, object>> Cache =
+        protected  readonly SynchronizedCache<string, Tuple<AskMessage, object>> Cache =
             new SynchronizedCache<string, Tuple<AskMessage, object>>();
     }
 }

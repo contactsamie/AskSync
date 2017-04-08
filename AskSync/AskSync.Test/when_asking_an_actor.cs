@@ -391,13 +391,14 @@ namespace AskSync.Test
             }
             Assert.True(sw.Elapsed < expected, $"Execution took {sw.ElapsedMilliseconds} ms longer than  {expected.TotalMilliseconds} ms ");
         }
+
+       
         /*
-          
-           [Fact]
+            [Fact]
            public void it_should_do_ask_sync_for_many2()
            {
                const int rate = 15;
-               const int total = 1000;
+               const int total = 100;
                var sw = new Stopwatch();
                var expected = TimeSpan.FromMilliseconds(total / rate);
                var system = ActorSystem.Create("TestActorSystem");
@@ -415,6 +416,8 @@ namespace AskSync.Test
                }
                Assert.True(sw.Elapsed < expected, $"Execution took {sw.ElapsedMilliseconds} ms longer than  {expected.TotalMilliseconds} ms ");
            }
-            */
+         
+         */
+
     }
 }

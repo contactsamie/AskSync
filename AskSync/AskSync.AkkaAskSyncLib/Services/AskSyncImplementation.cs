@@ -5,7 +5,7 @@ using AskSync.AkkaAskSyncLib.Actors;
 
 namespace AskSync.AkkaAskSyncLib.Services
 {
-    internal static class AskSyncImplementation
+    internal  class AskSyncImplementation
     {
         internal static T AskSyncImpl<T>(
             ICanTell actorRef
@@ -13,7 +13,14 @@ namespace AskSync.AkkaAskSyncLib.Services
             , TimeSpan? timeout = null
             , AskSyncOptions options = null)
         {
-            options = options ?? new AskSyncOptions();
+            //var makeThreadSafe = true;
+            //if (makeThreadSafe)
+            //{
+            //    WorkerActor = null;
+            //    ActorSystem = null;
+            //}
+
+        options = options ?? new AskSyncOptions();
             ActorSystem = GetOrCreatedActorSystem(
                 ActorSystem
                 , options

@@ -5,19 +5,19 @@ namespace AskSync.AkkaAskSyncLib
 {
     internal class SynchronousAskFactory
     {
-        private static readonly IAskSynchronously AskSynchronously = new DefaultAskSynchronously();
+        private readonly IAskSynchronously _askSynchronously = new DefaultAskSynchronously();
         // private static readonly IAskSynchronously AskSynchronously = new NoLockingAskSynchronously();
         // private static readonly ICacheService CacheService = new ConcurrentDictionaryCacheService();
-        private static readonly ICacheService CacheService = new SynchronizedCacheService();
+        private readonly ICacheService _cacheService = new SynchronizedCacheService();
 
         public IAskSynchronously GetSynchronousAsk()
         {
-            return AskSynchronously;
+            return _askSynchronously;
         }
 
         public ICacheService GetCacheService()
         {
-            return CacheService;
+            return _cacheService;
         }
     }
 }
