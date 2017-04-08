@@ -6,9 +6,16 @@ namespace AskSync.AkkaAskSyncLib.Messages
 {
     internal class AskMessage
     {
-       
-
-        public AskMessage(string messageId, ICanTell actor, object message, ManualResetEventSlim signal, int workerActorPoolSize, int? retryIdentificationCount, bool identifyBeforeSending, Func<int, TimeSpan> calculateTimeBeforeRetry)
+        public AskMessage(
+            string messageId
+            , ICanTell actor
+            , object message
+            , ManualResetEventSlim signal
+            , int workerActorPoolSize
+            , int? retryIdentificationCount
+            , bool identifyBeforeSending
+            , Func<int, TimeSpan> calculateTimeBeforeRetry
+            , string whenonlyretrayableIdentifyFailsMessage)
         {
             MessageId = messageId;
             ActorRef = actor;
@@ -18,6 +25,7 @@ namespace AskSync.AkkaAskSyncLib.Messages
             RetryIdentificationCount = retryIdentificationCount;
             IdentifyBeforeSending = identifyBeforeSending;
             CalculateTimeBeforeRetry = calculateTimeBeforeRetry;
+            WhenonlyretrayableIdentifyFailsMessage = whenonlyretrayableIdentifyFailsMessage;
         }
 
         public string MessageId { get; private set; }
@@ -28,5 +36,6 @@ namespace AskSync.AkkaAskSyncLib.Messages
         public int? RetryIdentificationCount { get; private set; }
         public bool IdentifyBeforeSending { get; private set; }
         public Func<int, TimeSpan> CalculateTimeBeforeRetry { get; private set; }
+        public string WhenonlyretrayableIdentifyFailsMessage { get; private set; }
     }
 }

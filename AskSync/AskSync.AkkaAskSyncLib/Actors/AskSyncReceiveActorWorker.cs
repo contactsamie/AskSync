@@ -28,19 +28,28 @@ namespace AskSync.AkkaAskSyncLib.Actors
             AskMessage message=null;
             if (askMessage != null)
             {
+                
                  message = askMessage;
                 _retryIdentificationCountDown = message.RetryIdentificationCount ?? 1;
                 _retryIdentificationCount = _retryIdentificationCountDown;
                 _identifyBeforeSending = message.IdentifyBeforeSending;
-                SynchronousAskFactory.GetCacheService().AddOrUpdate(message.MessageId, message, null);
+                SynchronousAskFactory.GetCacheService().AddOrUpdate(message.MessageId, message, message.WhenonlyretrayableIdentifyFailsMessage);
                 _messageId = message.MessageId;
              
             }
-            var useRetryMechanism = _identifyBeforeSending &&(m is ActorIdentity && ((ActorIdentity) m)?.MessageId?.ToString() == RetryMessageId);
-            if (useRetryMechanism )
+           
+            if (!RetryStarted && _identifyBeforeSending)
             {
                 var cache = SynchronousAskFactory.GetCacheService().Read(_messageId);
-                TryIdentifyAndSendUsingRetryMechanism(m, cache);
+                TryIdentifyAndSendUsingRetryMechanism(m as ActorIdentity, cache);
+            }
+            else if(_identifyBeforeSending)
+            {
+                if (resolvedActorRef == null)
+                {
+                    throw new Exception();
+                }
+                (resolvedActorRef ).Tell(m, Self);
             }
             else
             {
@@ -48,18 +57,23 @@ namespace AskSync.AkkaAskSyncLib.Actors
                 {
                     throw new Exception();
                 }
-                (resolvedActorRef ?? message.ActorRef).Tell(message.Message, Self);
+                ( message.ActorRef).Tell(message.Message, Self);
             }
            
            
             return true;
         }
+
+        public bool RetryStarted { get; set; }
+
         private int _retryIdentificationCount;
         private int _retryIdentificationCountDown;
         private bool _identifyBeforeSending ;
         protected override bool AroundReceive(Receive receive, object message)
         {
-            if (message is AskMessage)
+            if (message is AskMessage ||
+                (message is ActorIdentity &&
+                ((ActorIdentity)message)?.MessageId?.ToString() == RetryMessageId))
             {
                 return base.AroundReceive(receive, message);
             }
@@ -69,21 +83,24 @@ namespace AskSync.AkkaAskSyncLib.Actors
         }
         
         private readonly Func<int,TimeSpan> _defaultCalculateTimeBeforeRetry=(i)=>TimeSpan.FromMilliseconds(i*500);
-        private void TryIdentifyAndSendUsingRetryMechanism(object message, Tuple<AskMessage, object> cache )
+        private void TryIdentifyAndSendUsingRetryMechanism(ActorIdentity message, Tuple<AskMessage, object> cache )
         {
           var calculateTimeBeforeRetry = cache.Item1.CalculateTimeBeforeRetry ?? _defaultCalculateTimeBeforeRetry;
-            if (_retryIdentificationCountDown > 0)
+            if (_retryIdentificationCountDown >= 0)
             {
-                _retryIdentificationCountDown--;
-                var subject = ((ActorIdentity)message).Subject;
+              
+                var subject = message?.Subject;
                 if (subject != null)
                 {
-                    HandleReceive(cache.Item2, subject);
+                    RetryStarted = true;
+                    HandleReceive(cache.Item1.Message, subject);
                 }
                 else
                 {
+                    _retryIdentificationCountDown--;
+                    RetryStarted = false;
                     Context.System.Scheduler.ScheduleTellOnce(
-                        calculateTimeBeforeRetry(_retryIdentificationCount-_retryIdentificationCountDown)
+                        calculateTimeBeforeRetry(_retryIdentificationCount-_retryIdentificationCountDown-1)
                         , cache.Item1.ActorRef
                         , new Identify(RetryMessageId)
                         , Self);
@@ -91,7 +108,7 @@ namespace AskSync.AkkaAskSyncLib.Actors
             }
             else
             {
-                FinalizeActorProcessing(null, cache);
+                FinalizeActorProcessing(cache.Item1.WhenonlyretrayableIdentifyFailsMessage, cache);
             }
            
         }

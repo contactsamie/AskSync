@@ -23,6 +23,7 @@ namespace AskSync.AkkaAskSyncLib.Services
             )
         {
             id = id ?? Guid.NewGuid().ToString();
+            var whenonlyretrayableIdentifyFailsMessage = Guid.NewGuid().ToString();
             var signal = new ManualResetEventSlim();
             var message = new AskMessage(
                 id
@@ -32,14 +33,20 @@ namespace AskSync.AkkaAskSyncLib.Services
                 , workerActorPoolSize
                 , retryIdentificationCount
                 , identifyBeforeSending
-                , calculateTimeBeforeRetry);
+                , calculateTimeBeforeRetry
+                , whenonlyretrayableIdentifyFailsMessage);
+
             workerActor.Tell(message);
             signal.Wait(timeout ?? TimeSpan.FromSeconds(10));
             signal.Dispose();
             var result = synchronousAskFactory.GetCacheService().Read(id).Item2;
             if (result == null)
             {
-                throw new Exception($"Possibly timeout of {timeout} exceeded");
+                throw new AskSyncOperationTimeoutException($"Operation timeout exceeded {timeout}");
+            }
+            if (result as string == whenonlyretrayableIdentifyFailsMessage)
+            {
+                throw new AskSyncRetryableTimeoutException($"Operation timeout exceeded {timeout}");
             }
             return (T) result;
         }
