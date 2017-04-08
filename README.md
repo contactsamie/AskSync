@@ -33,7 +33,7 @@ NOTES 1: I agree with @HCanber on https://github.com/akkadotnet/akka.net/issues/
 
 NOTE 2: An AskSync to a remote actor may not work unless you provide your existing actorsystem with remoting enabled. For more info in configuring/enabling remoting see  http://getakka.net/docs/Remoting#using-remoting  For more information about the traditional Ask see http://getakka.net/docs/Working%20with%20actors#ask-send-and-receive-future
 
-CAUTION: This method is not thread safe!
+CAUTION: This method is not thread safe and slower than using the reagular await Ask()!
 
 For issues , https://github.com/contactsamie/AskSync/issues
 
