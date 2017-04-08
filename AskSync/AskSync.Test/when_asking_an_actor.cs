@@ -243,7 +243,7 @@ namespace AskSync.Test
             _output.WriteLine($"took {sw.Elapsed.TotalMilliseconds} ms : to send {size} messages");
             foreach (var data in range.Select(i => results[i.ToString()]))
             {
-                Assert.True(data != null && data.Subject != null);
+                Assert.True(data?.Subject != null);
             }
             Assert.Equal(size, results.Count);
             _output.WriteLine("Verified!");
@@ -255,7 +255,7 @@ namespace AskSync.Test
             var system = ActorSystem.Create("TestActorSystem");
             var actorRef = system.ActorOf(Props.Create(() => new TestActor()), nameof(TestActor) + "Tmp");
             var result = actorRef.AskSync<ActorIdentity>(new Identify(null));
-            Assert.True(result!=null && result.Subject!=null);
+            Assert.True(result?.Subject != null);
         }
         [Fact]
         public void it_should_do_ask_sync2()
@@ -264,25 +264,25 @@ namespace AskSync.Test
             var system = ActorSystem.Create("TestActorSystem");
             var actorRef = system.ActorOf(Props.Create(() => new TestActor()), nameof(TestActor) + "Tmp");
             var result = system.ActorSelection(actorAddress).AskSync<ActorIdentity>(new Identify(null));
-            Assert.True(result != null && result.Subject != null);
+            Assert.True(result?.Subject != null);
         }
         [Fact]
         public void it_should_fail_to_do_ask_sync_when_not_enough_retry_option_is_specified_IdentifyBeforeSending_not_set()
         {
             const string actorAddress = "user/" + nameof(TestActor) + "Tmp";
             var system = ActorSystem.Create("TestActorSystem");
-            
+
             var result = system.ActorSelection(actorAddress).AskSync<ActorIdentity>(
                 new Identify(null)
                 , new AskSyncOptions()
-            {
-                CalculateTimeBeforeRetry = (count) =>
                 {
-                    system.ActorOf(Props.Create(() => new TestActor()), nameof(TestActor) + "Tmp");
-                    return TimeSpan.Zero;
-                }
-            });
-            Assert.False(result != null && result.Subject != null);
+                    CalculateTimeBeforeRetry = (count) =>
+                    {
+                        system.ActorOf(Props.Create(() => new TestActor()), nameof(TestActor) + "Tmp");
+                        return TimeSpan.Zero;
+                    }
+                });
+            Assert.False(result?.Subject != null);
         }
 
         [Fact]
@@ -294,20 +294,21 @@ namespace AskSync.Test
             var result = system.ActorSelection(actorAddress).AskSync<ActorIdentity>(
                 new Identify(null)
                 , new AskSyncOptions()
-            {
-                CalculateTimeBeforeRetry = (count) =>
                 {
-                    system.ActorOf(Props.Create(() => new TestActor()), nameof(TestActor) + "Tmp");
-                    return TimeSpan.Zero;
-                }
-                ,IdentifyBeforeSending = true
-            });
-            Assert.True(result != null && result.Subject != null);
+                    CalculateTimeBeforeRetry = (count) =>
+                    {
+                        system.ActorOf(Props.Create(() => new TestActor()), nameof(TestActor) + "Tmp");
+                        return TimeSpan.Zero;
+                    }
+                ,
+                    IdentifyBeforeSending = true
+                });
+            Assert.True(result?.Subject != null);
         }
         [Fact]
         public void it_should_fail_to_do_ask_sync_when_not_enough_retry_option_is_specified3()
         {
-            const string actorAddress = "user/" + nameof(TestActor)+"Tmp";
+            const string actorAddress = "user/" + nameof(TestActor) + "Tmp";
             var system = ActorSystem.Create("TestActorSystem");
 
             Assert.Throws<AskSyncRetryableTimeoutException>(() => system.ActorSelection(actorAddress).AskSync<ActorIdentity>(
@@ -333,15 +334,15 @@ namespace AskSync.Test
             var result = system.ActorSelection(actorAddress).AskSync<ActorIdentity>(
                 new Identify(null)
                 , new AskSyncOptions()
-            {
-                CalculateTimeBeforeRetry = (count) =>
                 {
-                    if (count >= retryCount-1)
-                        system.ActorOf(Props.Create(() => new TestActor()), nameof(TestActor) + "Tmp");
-                    return TimeSpan.Zero;
-                },
-                IdentifyBeforeSending = true,
-                RetryIdentificationCount = retryCount
+                    CalculateTimeBeforeRetry = (count) =>
+                    {
+                        if (count >= retryCount - 1)
+                            system.ActorOf(Props.Create(() => new TestActor()), nameof(TestActor) + "Tmp");
+                        return TimeSpan.Zero;
+                    },
+                    IdentifyBeforeSending = true,
+                    RetryIdentificationCount = retryCount
                 });
             Assert.True(result?.Subject != null);
         }
@@ -368,7 +369,52 @@ namespace AskSync.Test
                     RetryIdentificationCount = retryCount
                 });
             Assert.True(result?.Subject != null);
-            Assert.Equal(retryCount,lastCount+1);
+            Assert.Equal(retryCount, lastCount + 1);
         }
+        [Fact]
+        public void it_should_do_ask_sync_for_many()
+        {
+            const int rate = 10;
+            const int total = 100000;
+            var sw = new Stopwatch();
+            var expected = TimeSpan.FromMilliseconds(total / rate);
+            var system = ActorSystem.Create("TestActorSystem");
+            var actorRef = system.ActorOf(Props.Create(() => new TestActor()), nameof(TestActor) + "Tmp");
+            sw.Start();
+            var results = Enumerable.Range(0, total).Select((x) => actorRef.AskSync<ActorIdentity>(new Identify(null))).ToList();
+            sw.Stop();
+            _output.WriteLine($"Execution took  {sw.ElapsedMilliseconds} ms expected : {expected.TotalMilliseconds} ms ");
+            Assert.Equal(total, results.Count);
+            foreach (var result in results)
+            {
+                Assert.True(result?.Subject != null);
+            }
+            Assert.True(sw.Elapsed < expected, $"Execution took {sw.ElapsedMilliseconds} ms longer than  {expected.TotalMilliseconds} ms ");
+        }
+        /*
+          
+           [Fact]
+           public void it_should_do_ask_sync_for_many2()
+           {
+               const int rate = 15;
+               const int total = 1000;
+               var sw = new Stopwatch();
+               var expected = TimeSpan.FromMilliseconds(total / rate);
+               var system = ActorSystem.Create("TestActorSystem");
+               var actorRef = system.ActorOf(Props.Create(() => new TestActor()), nameof(TestActor) + "Tmp");
+               sw.Start();
+               var resultTasks = Enumerable.Range(0, total).Select((x) => Task.Run(() => actorRef.AskSync<ActorIdentity>(new Identify(null)))).ToList();
+               resultTasks.ForEach(x => x.Wait());
+               sw.Stop();
+               var results = resultTasks.Select(x => x.Result).ToList();
+               _output.WriteLine($"Execution took  {sw.ElapsedMilliseconds} ms expected : {expected.TotalMilliseconds} ms ");
+               Assert.Equal(total, results.Count);
+               foreach (var result in results)
+               {
+                   Assert.True(result?.Subject != null);
+               }
+               Assert.True(sw.Elapsed < expected, $"Execution took {sw.ElapsedMilliseconds} ms longer than  {expected.TotalMilliseconds} ms ");
+           }
+            */
     }
 }
